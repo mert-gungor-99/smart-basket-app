@@ -2,97 +2,160 @@
 <html lang="tr">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Sepet & Bütçe Mini App</title>
 
-  <!-- PWA: Manifest & Tema -->
-  <link rel="manifest" href="/manifest.json">
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f1115" />
-
   <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
-  <!-- Favicon (opsiyonel ama faydalı) -->
-  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png" />
+  <!-- Favicons (opsiyonel) -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png" />
 
   <style>
+    /* ==== Global Reset & Mobile Polish ==== */
     :root{
-      --bg:#0f1115; --card:#171923; --muted:#7a86a1; --text:#e5e7ef;
+      --bg:#0f1115; --bg2:#0d1017; --card:#171923; --muted:#8a93a8; --text:#e5e7ef;
       --accent:#5b9cff; --accent-2:#22c55e; --danger:#ef4444; --border:#24283a;
+      --ring:#3a66ff55;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{box-sizing:border-box; -webkit-tap-highlight-color: transparent}
+    html{
+      height:100%;
+      background:var(--bg);
+      color-scheme: dark; /* iOS klavye/scrollbar koyu */
+      overscroll-behavior-y: none; /* iOS bounce etkisini azalt */
+    }
     body{
-      margin:0; font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;
-      color:var(--text); background:linear-gradient(180deg,#0d1017, #0f1115 40%);
+      min-height:100dvh; /* mobil gerçek viewport */
+      margin:0;
+      font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 80% -10%, #15305866 0%, transparent 60%),
+        radial-gradient(800px 500px at -10% 20%, #1a3a2f55 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg2) 0%, var(--bg) 40%);
+      background-attachment: fixed;
       display:flex; flex-direction:column; gap:16px;
+      overflow-x:hidden;
     }
+    a{color:inherit}
+    img{max-width:100%; display:block}
+    ::selection{background:#5b9cff55}
+
+    /* ==== Layout ==== */
     header{
-      position:sticky; top:0; z-index:3; backdrop-filter:saturate(120%) blur(6px);
-      background:rgba(13,16,23,.6); border-bottom:1px solid var(--border);
+      position:sticky; top:0; z-index:3;
+      backdrop-filter:saturate(120%) blur(8px);
+      background:color-mix(in oklab, #0a0e18 70%, transparent);
+      border-bottom:1px solid var(--border);
+      padding-top:calc(8px + var(--safe-top));
     }
     .wrap{max-width:880px; margin:0 auto; padding:18px 20px}
     .title{display:flex; align-items:center; gap:12px; margin:0 0 10px}
-    .title svg{width:26px; height:26px}
+    .title svg{width:26px; height:26px; filter:drop-shadow(0 2px 8px #5b9cff44)}
     .muted{color:var(--muted); font-size:14px}
-    .card{background:var(--card); border:1px solid var(--border);
-      border-radius:16px; padding:14px}
+
+    .card{
+      background:color-mix(in oklab, var(--card) 85%, #0a0d14);
+      border:1px solid var(--border);
+      border-radius:16px; padding:14px;
+      box-shadow:0 10px 30px #00000040, inset 0 1px 0 #ffffff08;
+      animation:card-in .45s cubic-bezier(.2,.7,.2,1);
+    }
+    @keyframes card-in{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
+
+    /* ==== Inputs ==== */
     .input-row{
       display:grid; grid-template-columns:1.2fr .6fr auto; gap:10px; align-items:end;
     }
     label{font-size:12px; color:var(--muted); display:block; margin:0 0 6px}
     input[type="text"], input[type="number"]{
       width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border);
-      background:#0d1117; color:var(--text); outline:none;
+      background:#0c1018; color:var(--text); outline:none;
+      transition:border-color .18s ease, box-shadow .18s ease, transform .06s ease;
     }
-    input::placeholder{color:#8a93a8}
-    button.icon{
+    input:focus{
+      border-color:#2f3f7a; box-shadow:0 0 0 6px var(--ring);
+      transform:translateY(-1px);
+    }
+    input::placeholder{color:#7c86a3}
+
+    /* ==== Buttons (icon + ripple) ==== */
+    .icon{
       display:inline-flex; align-items:center; gap:8px; padding:12px 14px;
-      border-radius:12px; border:1px solid #2a2f45; background:#10131b; color:#dfe3f5;
-      cursor:pointer; transition:.18s ease; font-weight:600;
+      border-radius:12px; border:1px solid #2a2f45; background:linear-gradient(180deg,#111626,#0e1320);
+      color:#dfe3f5; cursor:pointer; transition:transform .08s ease, filter .18s ease, border-color .18s ease;
+      font-weight:700; position:relative; overflow:hidden;
     }
-    button.icon:hover{transform:translateY(-1px); border-color:#3a4163}
-    button.icon svg{width:18px; height:18px}
+    .icon svg{width:18px; height:18px}
+    .icon:active{transform:scale(.98)}
+    .icon:hover{border-color:#3a4163; filter:brightness(1.06)}
+    .icon::after{ /* ripple */
+      content:""; position:absolute; inset:auto auto 0 0; width:0; height:0; border-radius:50%;
+      background:#5b9cff33; transform:translate(-50%,50%); pointer-events:none;
+    }
+    .icon:active::after{
+      width:220%; height:220%; transition:width .28s ease, height .28s ease;
+    }
+
+    /* ==== Items ==== */
     .items{display:flex; flex-direction:column; gap:10px; margin-top:12px}
     .item{
       display:grid; grid-template-columns:auto 1fr auto auto; gap:10px; align-items:center;
       padding:10px 12px; border:1px dashed #2a3147; border-radius:12px; background:#0e121a;
+      animation:item-in .35s cubic-bezier(.21,.7,.18,1);
     }
+    @keyframes item-in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
+
     .item.done{opacity:.6; text-decoration:line-through}
-    .pill{
-      font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid #2a3147; color:#b7c0d9;
-    }
+    .pill{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid #2a3147; color:#b7c0d9}
     .money{font-variant-numeric:tabular-nums; font-weight:700}
     .ghost{
       background:transparent; border:1px solid #2a3147; color:#cbd5f1; border-radius:10px;
-      padding:8px 10px; cursor:pointer
+      padding:8px 10px; cursor:pointer; transition:transform .08s ease, border-color .18s ease;
     }
+    .ghost:active{transform:scale(.97)}
     .ghost:hover{border-color:#3a4163}
+
+    /* ==== Footer totals (safe-area aware) ==== */
     footer.totals{
-      position:sticky; bottom:0; z-index:3; background:rgba(10,12,18,.86);
-      border-top:1px solid var(--border); backdrop-filter:saturate(120%) blur(6px);
+      position:sticky; bottom:0; z-index:3;
+      background:color-mix(in oklab, #0a0e18 88%, transparent);
+      border-top:1px solid var(--border); backdrop-filter:saturate(120%) blur(8px);
+      padding-bottom:calc(8px + var(--safe-bottom));
     }
-    .totals-row{
-      display:flex; align-items:center; justify-content:space-between; gap:16px;
+    .totals-row{display:flex; align-items:center; justify-content:space-between; gap:16px}
+    .badge{
+      display:inline-flex; align-items:center; gap:6px; background:#101624; border:1px solid #233053;
+      padding:8px 10px; border-radius:12px; font-weight:600
     }
-    .badge{display:inline-flex; align-items:center; gap:6px; background:#101624; border:1px solid #233053;
-      padding:8px 10px; border-radius:12px; font-weight:600}
     .badge svg{width:16px; height:16px}
     .total{
       display:flex; align-items:center; gap:12px; font-weight:800; font-size:18px;
-      background:#0f1524; border:1px solid #243055; padding:10px 14px; border-radius:12px;
+      background:linear-gradient(180deg,#0f1524,#0c1220); border:1px solid #243055; padding:10px 14px; border-radius:12px;
+      box-shadow:inset 0 1px 0 #ffffff08, 0 6px 20px #00000040;
     }
+
+    /* ==== Toast ==== */
     .toast{
-      position:fixed; right:20px; bottom:88px; z-index:9999; display:none;
+      position:fixed; right:20px; bottom:calc(88px + var(--safe-bottom)); z-index:9999; display:none;
       background:#0c1a12; border:1px solid #1c3d2a; color:#dbffe6;
       padding:12px 14px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.35)
     }
     .toast.show{display:block; animation:slideup .35s ease}
     @keyframes slideup{from{transform:translateY(12px); opacity:.4} to{transform:translateY(0); opacity:1}}
+
+    /* ==== Mobile tweaks ==== */
     @media (max-width:640px){
+      .wrap{padding:16px 14px}
       .input-row{grid-template-columns:1fr 1fr auto}
       .item{grid-template-columns:auto 1fr auto}
       .item .pill{display:none}
@@ -103,6 +166,7 @@
   <header>
     <div class="wrap">
       <h1 class="title">
+        <!-- cart icon -->
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="18" cy="21" r="1" fill="currentColor"/>
@@ -160,7 +224,7 @@
   <div id="toast" class="toast" role="status" aria-live="polite">Sepete atıldı</div>
 
   <script>
-    // --- util: TL format & parse ---
+    // --- TL format & parse ---
     const fmt = new Intl.NumberFormat('tr-TR', { style:'currency', currency:'TRY', minimumFractionDigits:2 });
     function parsePrice(v){
       if(typeof v !== 'string') return NaN;
@@ -204,6 +268,8 @@
           <span class="pill money">${fmt.format(it.price)}</span>
           <button class="ghost" aria-label="Sil" data-act="del" data-idx="${idx}" title="Sil">🗑️</button>
         `;
+        // minik giriş animasyonu
+        row.style.willChange = 'transform, opacity';
         itemsEl.appendChild(row);
       });
 
@@ -218,21 +284,28 @@
       toastEl.textContent = msg || 'Sepete atıldı';
       toastEl.classList.add('show');
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1500);
+      toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1400);
     }
 
     // --- handlers ---
     function addItem(){
       const name = (nameEl.value || '').trim();
       const price = parsePrice((priceEl.value || '').trim());
-      if(!name){ nameEl.focus(); return; }
-      if(!Number.isFinite(price) || price < 0){ priceEl.focus(); return; }
+      if(!name){ nameEl.focus(); pulse(nameEl); return; }
+      if(!Number.isFinite(price) || price < 0){ priceEl.focus(); pulse(priceEl); return; }
 
-      items.push({ name, price, done:false, ts: Date.now() });
+      const item = { name, price, done:false, ts: Date.now() };
+      items.unshift(item); // yeni en üstte belirsin
       nameEl.value = ''; priceEl.value = '';
       nameEl.focus();
       render();
       toast('Sepete atıldı');
+    }
+
+    // ufak input titreşim/pulse
+    function pulse(el){
+      el.style.boxShadow = '0 0 0 6px #ef444455';
+      setTimeout(()=> el.style.boxShadow = '', 250);
     }
 
     itemsEl.addEventListener('click', (e)=>{
@@ -260,19 +333,18 @@
       if(confirm('Tüm ürünler silinsin mi?')){ items = []; render(); }
     });
 
-    // basic XSS guard for item name
+    // basic XSS guard
     function escapeHtml(s){ return s.replace(/[&<>"'`=\/]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;","/":"&#x2F;","`":"&#x60;","=":"&#x3D;"}[c])); }
 
     // init
     render();
 
-    // PWA: Service Worker kaydı (1.1'de istendiği gibi)
+    // PWA: Service Worker kaydı (GitHub Pages için göreli yol)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').catch(console.error);
+        navigator.serviceWorker.register('sw.js').catch(console.error);
       });
     }
   </script>
 </body>
 </html>
-
