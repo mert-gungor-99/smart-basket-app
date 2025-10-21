@@ -5,13 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sepet & Bütçe Mini App</title>
 
-  <!-- PWA -->
+  <!-- PWA: Manifest & Tema -->
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0f1115">
+  <meta name="theme-color" content="#0f1115" />
+
   <!-- iOS PWA -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="apple-touch-icon" href="/icons/icon-192.png"/>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+
+  <!-- Favicon (opsiyonel ama faydalı) -->
+  <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512.png" />
 
   <style>
     :root{
@@ -182,7 +187,7 @@
     // --- render ---
     function render(){
       itemsEl.innerHTML = '';
-      if(items.length === 0) emptyState.style.display = 'block'; else emptyState.style.display = 'none';
+      emptyState.style.display = items.length === 0 ? 'block' : 'none';
 
       let sum = 0;
       items.forEach((it, idx) => {
@@ -261,7 +266,7 @@
     // init
     render();
 
-    // PWA: Service Worker kaydı
+    // PWA: Service Worker kaydı (1.1'de istendiği gibi)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').catch(console.error);
@@ -270,3 +275,4 @@
   </script>
 </body>
 </html>
+
