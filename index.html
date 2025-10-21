@@ -6,7 +6,7 @@
   <title>Sepet & Bütçe Mini App</title>
 
   <!-- PWA -->
-  <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0f1115" />
   <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -34,7 +34,7 @@
       overscroll-behavior-y: none; /* iOS bounce etkisini azalt */
     }
     body{
-      min-height:100dvh; /* mobil gerçek viewport */
+      min-height:100dvh;
       margin:0;
       font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;
       color:var(--text);
@@ -46,8 +46,6 @@
       display:flex; flex-direction:column; gap:16px;
       overflow-x:hidden;
     }
-    a{color:inherit}
-    img{max-width:100%; display:block}
     ::selection{background:#5b9cff55}
 
     /* ==== Layout ==== */
@@ -88,7 +86,7 @@
     }
     input::placeholder{color:#7c86a3}
 
-    /* ==== Buttons (icon + ripple) ==== */
+    /* ==== Buttons ==== */
     .icon{
       display:inline-flex; align-items:center; gap:8px; padding:12px 14px;
       border-radius:12px; border:1px solid #2a2f45; background:linear-gradient(180deg,#111626,#0e1320);
@@ -102,9 +100,7 @@
       content:""; position:absolute; inset:auto auto 0 0; width:0; height:0; border-radius:50%;
       background:#5b9cff33; transform:translate(-50%,50%); pointer-events:none;
     }
-    .icon:active::after{
-      width:220%; height:220%; transition:width .28s ease, height .28s ease;
-    }
+    .icon:active::after{ width:220%; height:220%; transition:width .28s ease, height .28s ease; }
 
     /* ==== Items ==== */
     .items{display:flex; flex-direction:column; gap:10px; margin-top:12px}
@@ -268,7 +264,6 @@
           <span class="pill money">${fmt.format(it.price)}</span>
           <button class="ghost" aria-label="Sil" data-act="del" data-idx="${idx}" title="Sil">🗑️</button>
         `;
-        // minik giriş animasyonu
         row.style.willChange = 'transform, opacity';
         itemsEl.appendChild(row);
       });
@@ -295,14 +290,14 @@
       if(!Number.isFinite(price) || price < 0){ priceEl.focus(); pulse(priceEl); return; }
 
       const item = { name, price, done:false, ts: Date.now() };
-      items.unshift(item); // yeni en üstte belirsin
+      items.unshift(item); // yeni en üstte
       nameEl.value = ''; priceEl.value = '';
       nameEl.focus();
       render();
       toast('Sepete atıldı');
     }
 
-    // ufak input titreşim/pulse
+    // ufak input pulse
     function pulse(el){
       el.style.boxShadow = '0 0 0 6px #ef444455';
       setTimeout(()=> el.style.boxShadow = '', 250);
