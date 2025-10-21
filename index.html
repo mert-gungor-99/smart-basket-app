@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sepet & Bütçe Mini App</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0f1115">
+  <!-- iOS PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png"/>
+
+  <style>
+    :root{
+      --bg:#0f1115; --card:#171923; --muted:#7a86a1; --text:#e5e7ef;
+      --accent:#5b9cff; --accent-2:#22c55e; --danger:#ef4444; --border:#24283a;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;
+      color:var(--text); background:linear-gradient(180deg,#0d1017, #0f1115 40%);
+      display:flex; flex-direction:column; gap:16px;
+    }
+    header{
+      position:sticky; top:0; z-index:3; backdrop-filter:saturate(120%) blur(6px);
+      background:rgba(13,16,23,.6); border-bottom:1px solid var(--border);
+    }
+    .wrap{max-width:880px; margin:0 auto; padding:18px 20px}
+    .title{display:flex; align-items:center; gap:12px; margin:0 0 10px}
+    .title svg{width:26px; height:26px}
+    .muted{color:var(--muted); font-size:14px}
+    .card{background:var(--card); border:1px solid var(--border);
+      border-radius:16px; padding:14px}
+    .input-row{
+      display:grid; grid-template-columns:1.2fr .6fr auto; gap:10px; align-items:end;
+    }
+    label{font-size:12px; color:var(--muted); display:block; margin:0 0 6px}
+    input[type="text"], input[type="number"]{
+      width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border);
+      background:#0d1117; color:var(--text); outline:none;
+    }
+    input::placeholder{color:#8a93a8}
+    button.icon{
+      display:inline-flex; align-items:center; gap:8px; padding:12px 14px;
+      border-radius:12px; border:1px solid #2a2f45; background:#10131b; color:#dfe3f5;
+      cursor:pointer; transition:.18s ease; font-weight:600;
+    }
+    button.icon:hover{transform:translateY(-1px); border-color:#3a4163}
+    button.icon svg{width:18px; height:18px}
+    .items{display:flex; flex-direction:column; gap:10px; margin-top:12px}
+    .item{
+      display:grid; grid-template-columns:auto 1fr auto auto; gap:10px; align-items:center;
+      padding:10px 12px; border:1px dashed #2a3147; border-radius:12px; background:#0e121a;
+    }
+    .item.done{opacity:.6; text-decoration:line-through}
+    .pill{
+      font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid #2a3147; color:#b7c0d9;
+    }
+    .money{font-variant-numeric:tabular-nums; font-weight:700}
+    .ghost{
+      background:transparent; border:1px solid #2a3147; color:#cbd5f1; border-radius:10px;
+      padding:8px 10px; cursor:pointer
+    }
+    .ghost:hover{border-color:#3a4163}
+    footer.totals{
+      position:sticky; bottom:0; z-index:3; background:rgba(10,12,18,.86);
+      border-top:1px solid var(--border); backdrop-filter:saturate(120%) blur(6px);
+    }
+    .totals-row{
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+    }
+    .badge{display:inline-flex; align-items:center; gap:6px; background:#101624; border:1px solid #233053;
+      padding:8px 10px; border-radius:12px; font-weight:600}
+    .badge svg{width:16px; height:16px}
+    .total{
+      display:flex; align-items:center; gap:12px; font-weight:800; font-size:18px;
+      background:#0f1524; border:1px solid #243055; padding:10px 14px; border-radius:12px;
+    }
+    .toast{
+      position:fixed; right:20px; bottom:88px; z-index:9999; display:none;
+      background:#0c1a12; border:1px solid #1c3d2a; color:#dbffe6;
+      padding:12px 14px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.35)
+    }
+    .toast.show{display:block; animation:slideup .35s ease}
+    @keyframes slideup{from{transform:translateY(12px); opacity:.4} to{transform:translateY(0); opacity:1}}
+    @media (max-width:640px){
+      .input-row{grid-template-columns:1fr 1fr auto}
+      .item{grid-template-columns:auto 1fr auto}
+      .item .pill{display:none}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1 class="title">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="18" cy="21" r="1" fill="currentColor"/>
+        </svg>
+        Smart Basket <span class="muted">• hızlı not al, sepete ekle, toplamı gör</span>
+      </h1>
+      <div class="card">
+        <div class="input-row">
+          <div>
+            <label for="name">Ürün adı</label>
+            <input id="name" type="text" placeholder="Örn: Süt 1L" autocomplete="off" />
+          </div>
+          <div>
+            <label for="price">Fiyat (₺)</label>
+            <input id="price" type="text" inputmode="decimal" placeholder="Örn: 39,90" />
+          </div>
+          <div>
+            <label style="visibility:hidden">.</label>
+            <button id="addBtn" class="icon" title="Sepete ekle">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 12l3 3 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Sepete Ekle
+            </button>
+          </div>
+        </div>
+        <div class="items" id="items"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="emptyState" style="display:none;">
+    <div class="card" style="text-align:center; padding:30px">
+      Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong>’ye bas.
+    </div>
+  </main>
+
+  <footer class="totals">
+    <div class="wrap totals-row">
+      <div class="badge">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M8 6h13l-2 8H9L7 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="count">0 ürün</span>
+      </div>
+      <div class="total">
+        Toplam:
+        <span class="money" id="total">₺0,00</span>
+        <button class="ghost" id="clearAll" title="Hepsini temizle">Temizle</button>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite">Sepete atıldı</div>
+
+  <script>
+    // --- util: TL format & parse ---
+    const fmt = new Intl.NumberFormat('tr-TR', { style:'currency', currency:'TRY', minimumFractionDigits:2 });
+    function parsePrice(v){
+      if(typeof v !== 'string') return NaN;
+      v = v.replace(/\s+/g,'').replace(/[₺]/g,'').replace(/\./g,'').replace(',', '.');
+      const n = parseFloat(v);
+      return Number.isFinite(n) ? n : NaN;
+    }
+
+    // --- state ---
+    const storeKey = 'smart-basket-v1';
+    let items = JSON.parse(localStorage.getItem(storeKey) || '[]');
+
+    // --- els ---
+    const nameEl = document.getElementById('name');
+    const priceEl = document.getElementById('price');
+    const addBtn = document.getElementById('addBtn');
+    const itemsEl = document.getElementById('items');
+    const countEl = document.getElementById('count');
+    const totalEl = document.getElementById('total');
+    const toastEl = document.getElementById('toast');
+    const emptyState = document.getElementById('emptyState');
+    const clearAllBtn = document.getElementById('clearAll');
+
+    // --- render ---
+    function render(){
+      itemsEl.innerHTML = '';
+      if(items.length === 0) emptyState.style.display = 'block'; else emptyState.style.display = 'none';
+
+      let sum = 0;
+      items.forEach((it, idx) => {
+        sum += it.price;
+
+        const row = document.createElement('div');
+        row.className = 'item' + (it.done ? ' done' : '');
+        row.innerHTML = `
+          <button class="ghost" aria-label="Satın alındı olarak işaretle" data-act="toggle" data-idx="${idx}" title="Tik">✓</button>
+          <div>
+            <div style="font-weight:700">${escapeHtml(it.name)}</div>
+            <div class="muted" style="font-size:12px">${new Date(it.ts).toLocaleString('tr-TR')}</div>
+          </div>
+          <span class="pill money">${fmt.format(it.price)}</span>
+          <button class="ghost" aria-label="Sil" data-act="del" data-idx="${idx}" title="Sil">🗑️</button>
+        `;
+        itemsEl.appendChild(row);
+      });
+
+      countEl.textContent = `${items.length} ürün`;
+      totalEl.textContent = fmt.format(sum);
+      localStorage.setItem(storeKey, JSON.stringify(items));
+    }
+
+    // --- toast ---
+    let toastTimer = null;
+    function toast(msg){
+      toastEl.textContent = msg || 'Sepete atıldı';
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1500);
+    }
+
+    // --- handlers ---
+    function addItem(){
+      const name = (nameEl.value || '').trim();
+      const price = parsePrice((priceEl.value || '').trim());
+      if(!name){ nameEl.focus(); return; }
+      if(!Number.isFinite(price) || price < 0){ priceEl.focus(); return; }
+
+      items.push({ name, price, done:false, ts: Date.now() });
+      nameEl.value = ''; priceEl.value = '';
+      nameEl.focus();
+      render();
+      toast('Sepete atıldı');
+    }
+
+    itemsEl.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      const idx = +btn.dataset.idx;
+      const act = btn.dataset.act;
+      if(Number.isNaN(idx)) return;
+
+      if(act === 'del'){
+        items.splice(idx,1);
+        render();
+      }else if(act === 'toggle'){
+        items[idx].done = !items[idx].done;
+        render();
+      }
+    });
+
+    addBtn.addEventListener('click', addItem);
+    nameEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') priceEl.focus(); });
+    priceEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') addItem(); });
+
+    clearAllBtn.addEventListener('click', ()=>{
+      if(items.length===0) return;
+      if(confirm('Tüm ürünler silinsin mi?')){ items = []; render(); }
+    });
+
+    // basic XSS guard for item name
+    function escapeHtml(s){ return s.replace(/[&<>"'`=\/]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;","/":"&#x2F;","`":"&#x60;","=":"&#x3D;"}[c])); }
+
+    // init
+    render();
+
+    // PWA: Service Worker kaydı
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(console.error);
+      });
+    }
+  </script>
+</body>
+</html>
