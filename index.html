@@ -11,6 +11,8 @@
   <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Smart Basket" />
+  <meta name="format-detection" content="telephone=no" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
   <!-- Favicons (opsiyonel) -->
@@ -30,6 +32,9 @@
       --ring:#16a34a55;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+      /* iOS fallback viewport yüksekliği */
+      --svh: 1vh;
     }
     *{box-sizing:border-box; -webkit-tap-highlight-color: transparent}
     html{
@@ -38,7 +43,9 @@
       overscroll-behavior-y: none;
     }
     body{
-      min-height:100dvh; margin:0;
+      /* 100dvh + iOS fallback */
+      min-height:calc(max(100dvh, 100 * var(--svh)));
+      margin:0;
       font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;
       color:var(--text);
       background:
@@ -48,7 +55,10 @@
       background-attachment: fixed;
       display:flex; flex-direction:column; gap:16px;
       overflow-x:hidden;
+      -webkit-user-select:none; user-select:none; /* iOS’ta istenmeyen seçimi azaltır */
     }
+    /* input alanlarında seçim serbest */
+    input, input::selection, textarea, textarea::selection { -webkit-user-select:text; user-select:text; }
     ::selection{background:#16a34a55}
 
     /* ======= Üst Bar ======= */
@@ -73,6 +83,7 @@
       width:30px; height:22px; border-radius:6px; border:1px solid #1b3c33;
       background:#0c1513; cursor:pointer; display:grid; place-items:center;
       transition:transform .06s ease, border-color .18s ease, background .18s ease, filter .18s ease;
+      touch-action: manipulation; /* iOS çift dokunma zoom’u azalt */
     }
     .flag:active{transform:scale(.96)}
     .flag.active{border-color:#22c55e; box-shadow:0 0 0 4px #16a34a33}
@@ -96,6 +107,8 @@
       width:100%; padding:12px 14px; border-radius:14px; border:1px solid var(--border);
       background:#0c1513; color:var(--text); outline:none;
       transition:border-color .18s ease, box-shadow .18s ease, transform .06s ease;
+      -webkit-appearance:none; appearance:none;
+      touch-action: manipulation;
     }
     input:focus{
       border-color:#1d5d45; box-shadow:0 0 0 6px var(--ring);
@@ -111,6 +124,7 @@
       color:#e9fff6; cursor:pointer; font-weight:800; letter-spacing:.2px;
       transition:transform .08s ease, filter .18s ease, border-color .18s ease, background .18s ease;
       position:relative; overflow:hidden; will-change:transform;
+      touch-action: manipulation; /* iOS çift dokunma zoom’u azalt */
     }
     .btn svg{width:18px; height:18px}
     .btn:hover{border-color:#256c50; filter:brightness(1.06)}
@@ -147,6 +161,7 @@
     .ghost{
       background:transparent; border:1px solid #1b3c33; color:#d2efe3; border-radius:10px;
       padding:8px 10px; cursor:pointer; transition:transform .08s ease, border-color .18s ease, background .18s ease;
+      touch-action: manipulation;
     }
     .ghost:hover{border-color:#2a6a54; background:#0e1d19}
     .ghost:active{transform:scale(.97)}
@@ -201,6 +216,19 @@
     .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
     .sheet input{border-radius:12px; background:#0b1513; border:1px solid #184235}
     .sheet .actions{display:flex; gap:10px; margin-top:12px; justify-content:flex-end}
+
+    /* ======= iOS A2HS Bant ======= */
+    .a2hs{
+      position:fixed; left:12px; right:12px; bottom:calc(100px + var(--safe-bottom));
+      background:#0e1916; color:#eaf5f1; border:1px solid #1b3f32; border-radius:14px;
+      box-shadow:0 14px 32px rgba(0,0,0,.4); z-index:70; padding:10px 12px; display:none;
+      animation:slideup .35s ease;
+    }
+    .a2hs strong{font-weight:800}
+    .a2hs .row{display:flex; align-items:center; justify-content:space-between; gap:12px}
+    .a2hs .hint{font-size:13px; color:#cfe9de}
+    .a2hs .close{background:transparent; border:1px solid #1b3c33; color:#cfe9de; border-radius:10px; padding:6px 8px; cursor:pointer}
+    .a2hs.show{display:block}
 
     /* ======= Mobile tweaks ======= */
     @media (max-width:640px){
@@ -335,6 +363,17 @@
     </div>
   </section>
 
+  <!-- iOS Add to Home Screen (A2HS) Bant -->
+  <div id="a2hs" class="a2hs" role="dialog" aria-live="polite" aria-hidden="true">
+    <div class="row">
+      <div class="hint">
+        <strong>Uygulama gibi kullan:</strong>
+        Paylaş → <em>Ana Ekrana Ekle</em>
+      </div>
+      <button id="a2hsClose" class="close">Kapat</button>
+    </div>
+  </div>
+
   <script>
     // ===== I18N =====
     const I18N = {
@@ -360,7 +399,9 @@
         editTitle: "Ürünü Düzenle",
         save: "Kaydet",
         close: "Kapat ✕",
-        dateLocale: "tr-TR"
+        dateLocale: "tr-TR",
+        a2hsHint: "Uygulama gibi kullan: Paylaş → Ana Ekrana Ekle",
+        a2hsClose: "Kapat"
       },
       en: {
         appTitle: "Smart Basket",
@@ -384,7 +425,9 @@
         editTitle: "Edit Item",
         save: "Save",
         close: "Close ✕",
-        dateLocale: "en-GB"
+        dateLocale: "en-GB",
+        a2hsHint: "Use like an app: Share → Add to Home Screen",
+        a2hsClose: "Close"
       }
     };
 
@@ -447,6 +490,10 @@
     const langTR = document.getElementById('langTR');
     const langEN = document.getElementById('langEN');
 
+    // iOS A2HS
+    const a2hs = document.getElementById('a2hs');
+    const a2hsClose = document.getElementById('a2hsClose');
+
     function applyI18N(){
       const t = I18N[lang];
 
@@ -480,6 +527,12 @@
       // flag active states
       langTR.classList.toggle('active', lang === 'tr');
       langEN.classList.toggle('active', lang === 'en');
+
+      // iOS A2HS içeriği
+      if (a2hs) {
+        a2hs.querySelector('.hint').innerHTML = `<strong>${t.a2hsHint.split(':')[0]}:</strong> ${t.a2hsHint.split(':')[1] || ''}`;
+        a2hsClose.textContent = t.a2hsClose;
+      }
 
       render();
     }
@@ -633,8 +686,62 @@
     // basic XSS guard
     function escapeHtml(s){ return s.replace(/[&<>"'`=\/]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;","/":"&#x2F;","`":"&#x60;","=":"&#x3D;"}[c])); }
 
+    // ===== iOS YARDIMCILARI =====
+
+    // 1) iOS viewport yüksekliği fallback (–svh)
+    function setSVH(){
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--svh', `${vh}px`);
+    }
+    setSVH();
+    window.addEventListener('resize', setSVH);
+    window.addEventListener('orientationchange', setSVH);
+
+    // 2) iOS standalone'da dış linklerin Safari'de açılmasını engelle
+    //    (uygulama içinde yönlendirme)
+    function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+    function isStandalone(){ return window.navigator.standalone === true; }
+    document.addEventListener('click', function(e){
+      if(!isIOS() || !isStandalone()) return;
+      const a = e.target.closest('a[href]');
+      if(!a) return;
+      const href = a.getAttribute('href');
+      if(!href) return;
+      const isHttp = href.startsWith('http://') || href.startsWith('https://') || href.startsWith('/');
+      if(isHttp){
+        e.preventDefault();
+        window.location.href = href;
+      }
+    }, { passive:true });
+
+    // 3) iOS için A2HS (Add to Home Screen) bilgilendirme bandı
+    const A2HS_KEY = 'sb-ios-a2hs-dismissed';
+    function showA2HSIfNeeded(){
+      if(!isIOS()) return;
+      if(isStandalone()) return; // zaten ana ekrandan
+      if(localStorage.getItem(A2HS_KEY) === '1') return;
+      a2hs?.classList.add('show');
+      a2hs?.setAttribute('aria-hidden','false');
+    }
+    a2hsClose?.addEventListener('click', ()=>{
+      localStorage.setItem(A2HS_KEY, '1');
+      a2hs.classList.remove('show');
+      a2hs.setAttribute('aria-hidden','true');
+    });
+
+    // 4) iOS klavye açılıp kapanınca scroll/whitespace sıçramalarını azalt
+    //    (input focus olduğunda suni scroll düzeltmesi)
+    let lastScrollY = window.scrollY;
+    window.addEventListener('scroll', ()=>{ lastScrollY = window.scrollY; }, {passive:true});
+    document.addEventListener('focusin', (e)=>{
+      if(isIOS() && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')){
+        setTimeout(()=> window.scrollTo(0, lastScrollY), 0);
+      }
+    });
+
     // init
     applyI18N();
+    showA2HSIfNeeded();
 
     // PWA: Service Worker (göreli yol)
     if ('serviceWorker' in navigator) {
