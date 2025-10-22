@@ -20,56 +20,40 @@
   <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png" />
 
   <style>
-    /* ======= Market Teması – Koyu Yeşil / Organik ======= */
     :root{
       --bg:#0a1110; --bg2:#0b1413; --card:#0f1817;
       --muted:#8aa39b; --text:#eaf5f1;
-      --primary:#16a34a;      /* market yeşili */
-      --primary-2:#22c55e;    /* açık yeşil */
-      --accent:#f59e0b;       /* amber vurgular */
-      --danger:#ef4444;
-      --border:#17312c;
-      --ring:#16a34a55;
+      --primary:#16a34a; --primary-2:#22c55e; --accent:#f59e0b; --danger:#ef4444;
+      --border:#17312c; --ring:#16a34a55;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
-
-      /* iOS fallback viewport yüksekliği */
       --svh: 1vh;
     }
     *{box-sizing:border-box; -webkit-tap-highlight-color: transparent}
-    html{
-      height:100%;
-      background:var(--bg); color-scheme: dark;
-      overscroll-behavior-y: none;
-    }
+    html{height:100%; background:var(--bg); color-scheme: dark; overscroll-behavior-y: none;}
     body{
       min-height:calc(max(100dvh, 100 * var(--svh)));
-      margin:0;
-      font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;
-      color:var(--text);
+      margin:0; font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu; color:var(--text);
       background:
         radial-gradient(1200px 600px at 80% -10%, #0a2f2150 0%, transparent 60%),
         radial-gradient(900px 520px at -10% 20%, #134e3240 0%, transparent 55%),
         linear-gradient(180deg, var(--bg2) 0%, var(--bg) 40%);
       background-attachment: fixed;
-      display:flex; flex-direction:column; gap:16px;
-      overflow-x:hidden;
+      display:flex; flex-direction:column; gap:16px; overflow-x:hidden;
       -webkit-user-select:none; user-select:none;
     }
     input, input::selection, textarea, textarea::selection { -webkit-user-select:text; user-select:text; }
     ::selection{background:#16a34a55}
 
     header{
-      position:sticky; top:0; z-index:10;
-      backdrop-filter:saturate(120%) blur(8px);
+      position:sticky; top:0; z-index:10; backdrop-filter:saturate(120%) blur(8px);
       background:color-mix(in oklab, #081210 86%, transparent);
       border-bottom:1px solid var(--border);
       padding-top:calc(8px + var(--safe-top));
     }
     .wrap{max-width:920px; margin:0 auto; padding:18px 20px}
     .title{display:flex; align-items:center; gap:12px; margin:0 0 4px}
-    .title svg{width:28px; height:28px; color:var(--primary);
-      filter:drop-shadow(0 2px 10px #16a34a55)}
+    .title svg{width:28px; height:28px; color:var(--primary); filter:drop-shadow(0 2px 10px #16a34a55)}
     .muted{color:var(--muted); font-size:14px}
 
     .lang-switch{ margin-left:auto; display:flex; align-items:center; gap:8px; }
@@ -85,8 +69,7 @@
 
     .card{
       background:color-mix(in oklab, var(--card) 90%, #071412);
-      border:1px solid var(--border);
-      border-radius:18px; padding:14px;
+      border:1px solid var(--border); border-radius:18px; padding:14px;
       box-shadow:0 10px 30px #00000040, inset 0 1px 0 #ffffff08;
       animation:card-in .45s cubic-bezier(.2,.7,.2,1);
     }
@@ -100,10 +83,7 @@
       transition:border-color .18s ease, box-shadow .18s ease, transform .06s ease;
       -webkit-appearance:none; appearance:none; touch-action: manipulation;
     }
-    input:focus{
-      border-color:#1d5d45; box-shadow:0 0 0 6px var(--ring);
-      transform:translateY(-1px);
-    }
+    input:focus{ border-color:#1d5d45; box-shadow:0 0 0 6px var(--ring); transform:translateY(-1px); }
     input::placeholder{color:#7fa399}
 
     /* ---- Basma + Ripple ---- */
@@ -111,10 +91,8 @@
     .pressable:active{ transform:scale(.98); }
     .ripple-ink{
       position:absolute; border-radius:50%; pointer-events:none;
-      background:rgba(22,163,74,.25);
-      transform:scale(0); opacity:1;
-      animation:ripple .6s ease-out forwards;
-      will-change:transform, opacity;
+      background:rgba(22,163,74,.25); transform:scale(0); opacity:1;
+      animation:ripple .6s ease-out forwards; will-change:transform, opacity;
     }
     @keyframes ripple{ to{ transform:scale(1); opacity:0; } }
 
@@ -124,8 +102,7 @@
       background:linear-gradient(180deg,#0f1f1a,#0c1915);
       color:#e9fff6; cursor:pointer; font-weight:800; letter-spacing:.2px;
       transition:transform .08s ease, filter .18s ease, border-color .18s ease, background .18s ease;
-      will-change:transform;
-      touch-action: manipulation;
+      will-change:transform; touch-action: manipulation;
     }
     .btn svg{width:18px; height:18px}
     .btn:hover{border-color:#256c50; filter:brightness(1.06)}
@@ -137,8 +114,7 @@
     .item{
       display:grid; grid-template-columns:auto 1fr auto auto auto; gap:10px; align-items:center;
       padding:12px 12px; border:1px solid #1b3c33; border-radius:14px;
-      background:linear-gradient(180deg,#0c1614,#0a1412);
-      animation:item-in .28s cubic-bezier(.21,.7,.18,1);
+      background:linear-gradient(180deg,#0c1614,#0a1412); animation:item-in .28s cubic-bezier(.21,.7,.18,1);
     }
     @keyframes item-in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
     .item.done{opacity:.6; text-decoration:line-through}
@@ -227,12 +203,10 @@
         <span class="muted" id="tagline">• hızlı ekle, işaretle, toplamı gör</span>
       </h1>
 
-      <!-- Language Switch -->
       <div class="lang-switch" aria-label="Language">
         <button id="langTR" class="flag pressable" title="Türkçe" aria-label="Türkçe">
           <svg viewBox="0 0 640 480" aria-hidden="true">
-            <path fill="#e30a17" d="M0 0h640v480H0z"/>
-            <circle fill="#fff" cx="258.4" cy="240" r="76.8"/>
+            <path fill="#e30a17" d="M0 0h640v480H0z"/><circle fill="#fff" cx="258.4" cy="240" r="76.8"/>
             <circle fill="#e30a17" cx="278.4" cy="240" r="64"/>
             <path fill="#fff" d="M335.7 240l51.8 16.8-32-44.2v54.8l32-44.2z"/>
           </svg>
@@ -279,16 +253,16 @@
             </button>
           </div>
         </div>
+
+        <!-- boş sepet bildirimi -->
+        <div id="inlineEmpty" class="muted" style="display:none; margin-top:8px">
+          🛒 Sepet boş. Ürün adı ve fiyat girip <strong>Sepete Ekle</strong>’ye bas.
+        </div>
+
         <div class="items" id="items"></div>
       </div>
     </div>
   </header>
-
-  <main class="wrap" id="emptyState" style="display:none;">
-    <div class="card" style="text-align:center; padding:28px" id="emptyMsg">
-      Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong>’ye bas.
-    </div>
-  </main>
 
   <footer class="totals">
     <div class="wrap totals-row">
@@ -346,21 +320,45 @@
   </div>
 
   <script>
-    // ===== Ayarlar =====
-    const CURRENCY = 'USD';       // sabit USD
-    const CURRENCY_SYMBOL = '$';
+    // ===== Para Birimi / Dil haritası =====
+    const CURRENCIES = {
+      USD: { code:'USD', symbol:'$', locales:['en-US'] },
+      TRY: { code:'TRY', symbol:'₺', locales:['tr-TR'] }
+    };
 
-    // ===== I18N =====
+    // Tercihler
+    let lang = localStorage.getItem('sb-lang');         // 'tr' | 'en'
+    let currencyCode = localStorage.getItem('sb-currency'); // 'TRY' | 'USD'
+
+    // Bölgeye göre ilk kurulum
+    if(!lang || !currencyCode){
+      const navLang = (navigator.language || 'en-US').toLowerCase();
+      const region = navLang.split('-')[1] || '';
+      if(region.toUpperCase() === 'TR'){
+        lang = 'tr'; currencyCode = 'TRY';
+      }else if(region.toUpperCase() === 'US'){
+        lang = 'en'; currencyCode = 'USD';
+      }else{
+        // varsayılan: İngilizce + USD
+        lang = lang || 'en'; currencyCode = currencyCode || 'USD';
+      }
+      localStorage.setItem('sb-lang', lang);
+      localStorage.setItem('sb-currency', currencyCode);
+    }
+
+    document.documentElement.lang = lang;
+
+    // I18N
     const I18N = {
       tr: {
         appTitle: "Smart Basket",
         tagline: "• hızlı ekle, işaretle, toplamı gör",
         labelName: "Ürün adı",
-        labelPrice: `Fiyat (${CURRENCY_SYMBOL})`,
+        labelPrice: () => `Fiyat (${CURRENCIES[currencyCode].symbol})`,
         phName: "Örn: Süt 1L",
-        phPrice: "Örn: 12,99",
+        phPrice: () => CURRENCIES[currencyCode].code === 'TRY' ? "Örn: 39,90" : "e.g., 12.99",
         add: "Sepete Ekle",
-        empty: "Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong>’ye bas.",
+        emptyInline: "🛒 Sepet boş. Ürün adı ve fiyat girip <strong>Sepete Ekle</strong>’ye bas.",
         count: n => `${n} ürün`,
         totalLabel: "Toplam:",
         clear: "Temizle",
@@ -382,11 +380,11 @@
         appTitle: "Smart Basket",
         tagline: "• add fast, check off, see totals",
         labelName: "Item name",
-        labelPrice: `Price (${CURRENCY_SYMBOL})`,
+        labelPrice: () => `Price (${CURRENCIES[currencyCode].symbol})`,
         phName: "e.g., Milk 1L",
-        phPrice: "e.g., 12.99",
+        phPrice: () => CURRENCIES[currencyCode].code === 'TRY' ? "Örn: 39,90" : "e.g., 12.99",
         add: "Add to Basket",
-        empty: "No items yet. Type a name and price, then press <strong>Add to Basket</strong>.",
+        emptyInline: "🛒 Basket is empty. Type a name and price, then press <strong>Add to Basket</strong>.",
         count: n => `${n} item${n===1?"":"s"}`,
         totalLabel: "Total:",
         clear: "Clear",
@@ -406,31 +404,25 @@
       }
     };
 
-    let lang = localStorage.getItem('sb-lang') || 'tr';
-    document.documentElement.lang = lang;
-
-    // --- Currency formatter: USD
+    // Formatter
     let fmt = new Intl.NumberFormat(I18N[lang].dateLocale, {
-      style:'currency', currency: CURRENCY, minimumFractionDigits:2
+      style:'currency', currency: CURRENCIES[currencyCode].code, minimumFractionDigits:2
     });
 
-    // --- price parse (accept $ , .)
+    // price parse
     function parsePrice(v){
       if(typeof v !== 'string') return NaN;
-      v = v.replace(/\s+/g,'')
-           .replace(/[${}]/g,'')      // $ ve süslü parantezleri temizle
-           .replace(/[₺]/g,'')
-           .replace(',', '.');
+      v = v.replace(/\s+/g,'').replace(/[₺$]/g,'').replace(',', '.');
       const n = parseFloat(v);
       return Number.isFinite(n) ? n : NaN;
     }
 
-    // --- state ---
+    // state
     const storeKey = 'smart-basket-v1';
     let items = JSON.parse(localStorage.getItem(storeKey) || '[]');
     let editingIndex = null;
 
-    // --- els ---
+    // els
     const appTitleEl = document.getElementById('appTitle');
     const taglineEl = document.getElementById('tagline');
     const nameEl = document.getElementById('name');
@@ -438,14 +430,12 @@
     const addBtn = document.getElementById('addBtn');
     const addBtnText = document.getElementById('btnAddText');
     const itemsEl = document.getElementById('items');
+    const inlineEmpty = document.getElementById('inlineEmpty');
     const countEl = document.getElementById('count');
     const totalEl = document.getElementById('total');
     const totalLabelEl = document.getElementById('totalLabel');
     const toastEl = document.getElementById('toast');
-    const emptyState = document.getElementById('emptyState');
-    const emptyMsg = document.getElementById('emptyMsg');
     const clearAllBtn = document.getElementById('clearAll');
-    const btnClearText = document.getElementById('btnClearText');
 
     const labelNameEl = document.getElementById('labelName');
     const labelPriceEl = document.getElementById('labelPrice');
@@ -469,36 +459,35 @@
     const langEN = document.getElementById('langEN');
 
     const a2hs = document.getElementById('a2hs');
-    const a2hsClose = document.getElementById('a2hsClose'); // **TEK tanım**
+    const a2hsClose = document.getElementById('a2hsClose');
 
     function applyI18N(){
       const t = I18N[lang];
-
       document.documentElement.lang = lang;
       appTitleEl.textContent = t.appTitle;
       taglineEl.textContent = t.tagline;
 
       labelNameEl.textContent = t.labelName;
-      labelPriceEl.textContent = t.labelPrice;
+      labelPriceEl.textContent = t.labelPrice();
       nameEl.placeholder = t.phName;
-      priceEl.placeholder = t.phPrice;
+      priceEl.placeholder = t.phPrice();
 
       addBtn.setAttribute('title', t.add);
       addBtnText.textContent = t.add;
 
-      emptyMsg.innerHTML = t.empty;
+      inlineEmpty.innerHTML = t.emptyInline;
+
       totalLabelEl.textContent = t.totalLabel;
-      btnClearText.textContent = t.clear;
-      clearAllBtn.title = t.clear;
+      clearAllBtn.textContent = t.clear;
 
       editTitleEl.textContent = t.editTitle;
       editLabelNameEl.textContent = t.labelName;
-      editLabelPriceEl.textContent = t.labelPrice;
+      editLabelPriceEl.textContent = t.labelPrice();
       btnSaveText.textContent = t.save;
       btnDeleteText.textContent = t.delete;
       btnCloseText.textContent = t.close;
 
-      fmt = new Intl.NumberFormat(t.dateLocale, { style:'currency', currency: CURRENCY, minimumFractionDigits:2 });
+      fmt = new Intl.NumberFormat(t.dateLocale, { style:'currency', currency: CURRENCIES[currencyCode].code, minimumFractionDigits:2 });
 
       langTR.classList.toggle('active', lang === 'tr');
       langEN.classList.toggle('active', lang === 'en');
@@ -508,14 +497,16 @@
         a2hs.querySelector('.hint').innerHTML = `<strong>${lead}:</strong> ${rest || ''}`;
         a2hsClose.textContent = t.a2hsClose;
       }
-
       render();
     }
 
     function setLang(newLang){
       if(!I18N[newLang]) return;
       lang = newLang;
+      // dil ile para birimini eşle
+      currencyCode = (newLang === 'tr') ? 'TRY' : 'USD';
       localStorage.setItem('sb-lang', lang);
+      localStorage.setItem('sb-currency', currencyCode);
       applyI18N();
       toast(I18N[lang].toastUpdated);
     }
@@ -523,11 +514,10 @@
     langTR.addEventListener('click', ()=> setLang('tr'));
     langEN.addEventListener('click', ()=> setLang('en'));
 
-    // --- render ---
     function render(){
       const t = I18N[lang];
       itemsEl.innerHTML = '';
-      emptyState.style.display = items.length === 0 ? 'block' : 'none';
+      inlineEmpty.style.display = items.length === 0 ? 'block' : 'none';
 
       let sum = 0;
       items.forEach((it, idx) => {
@@ -553,7 +543,7 @@
       localStorage.setItem(storeKey, JSON.stringify(items));
     }
 
-    // --- Toast ---
+    // Toast
     let toastTimer = null;
     function toast(msg){
       toastEl.textContent = msg || I18N[lang].toastAdded;
@@ -562,7 +552,7 @@
       toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1400);
     }
 
-    // --- Add ---
+    // Add
     function addItem(){
       const t = I18N[lang];
       const name = (nameEl.value || '').trim();
@@ -583,7 +573,7 @@
       setTimeout(()=> el.style.boxShadow = '', 220);
     }
 
-    // --- List actions ---
+    // List actions
     itemsEl.addEventListener('click', (e)=>{
       const btn = e.target.closest('button');
       if(!btn) return;
@@ -614,12 +604,13 @@
       if(confirm(I18N[lang].clearConfirm)){ items = []; render(); }
     });
 
-    // --- sheet controls ---
+    // sheet
     function openSheet(idx){
       editingIndex = idx;
       const it = items[idx];
       editNameEl.value = it.name;
       editPriceEl.value = it.price.toString();
+      document.getElementById('editLabelPrice').textContent = I18N[lang].labelPrice();
       sheet.classList.add('open');
       sheetBackdrop.style.display = 'block';
       sheet.setAttribute('aria-hidden','false');
@@ -657,14 +648,14 @@
       closeSheet();
     });
 
-    // basic XSS guard
+    // XSS guard
     function escapeHtml(s){
       return String(s).replace(/[&<>"'`=\/]/g, c => ({
         '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;','/':'&#x2F;','`':'&#x60;','=':'&#x3D;'
       }[c]));
     }
 
-    // ===== iOS YARDIMCILARI =====
+    // iOS helpers
     function setSVH(){
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--svh', `${vh}px`);
@@ -682,10 +673,7 @@
       const href = a.getAttribute('href');
       if(!href) return;
       const isHttp = href.startsWith('http://') || href.startsWith('https://') || href.startsWith('/');
-      if(isHttp){
-        e.preventDefault();
-        window.location.href = href;
-      }
+      if(isHttp){ e.preventDefault(); window.location.href = href; }
     }, { passive:true });
 
     const A2HS_KEY = 'sb-ios-a2hs-dismissed';
@@ -702,7 +690,7 @@
       a2hs.setAttribute('aria-hidden','true');
     });
 
-    // ===== Universal Ripple =====
+    // Ripple
     document.addEventListener('pointerdown', (e)=>{
       const el = e.target.closest('.pressable');
       if(!el) return;
@@ -717,10 +705,11 @@
       setTimeout(()=>ink.remove(), 650);
     }, {passive:true});
 
+    // init
     applyI18N();
     showA2HSIfNeeded();
 
-    // PWA: Service Worker (GH Pages alt klasör için scope fix)
+    // SW (GH Pages alt klasör)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(console.error);
