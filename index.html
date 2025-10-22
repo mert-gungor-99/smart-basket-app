@@ -6,7 +6,7 @@
   <title>Smart Basket • Market</title>
 
   <!-- PWA -->
-  <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="manifest.json?v=3" />
   <meta name="theme-color" content="#0a1110" />
   <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -60,10 +60,23 @@
       padding-top:calc(8px + var(--safe-top));
     }
     .wrap{max-width:920px; margin:0 auto; padding:18px 20px}
-    .title{display:flex; align-items:center; gap:12px; margin:0 0 8px}
+    .title{display:flex; align-items:center; gap:12px; margin:0 0 4px}
     .title svg{width:28px; height:28px; color:var(--primary);
       filter:drop-shadow(0 2px 10px #16a34a55)}
     .muted{color:var(--muted); font-size:14px}
+
+    /* Dil seçim alanı */
+    .lang-switch{
+      margin-left:auto; display:flex; align-items:center; gap:8px;
+    }
+    .flag{
+      width:30px; height:22px; border-radius:6px; border:1px solid #1b3c33;
+      background:#0c1513; cursor:pointer; display:grid; place-items:center;
+      transition:transform .06s ease, border-color .18s ease, background .18s ease, filter .18s ease;
+    }
+    .flag:active{transform:scale(.96)}
+    .flag.active{border-color:#22c55e; box-shadow:0 0 0 4px #16a34a33}
+    .flag svg{width:22px; height:16px}
 
     .card{
       background:color-mix(in oklab, var(--card) 90%, #071412);
@@ -201,24 +214,59 @@
 </head>
 <body>
   <header>
-    <div class="wrap">
-      <h1 class="title">
+    <div class="wrap" style="display:flex; align-items:flex-start; gap:12px">
+      <h1 class="title" style="margin-right:auto">
         <!-- cart icon -->
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="18" cy="21" r="1" fill="currentColor"/>
         </svg>
-        Smart Basket <span class="muted">• hızlı ekle, işaretle, toplamı gör</span>
+        <span id="appTitle">Smart Basket</span>
+        <span class="muted" id="tagline">• hızlı ekle, işaretle, toplamı gör</span>
       </h1>
 
+      <!-- Language Switch -->
+      <div class="lang-switch" aria-label="Language">
+        <button id="langTR" class="flag" title="Türkçe" aria-label="Türkçe">
+          <!-- Turkey flag -->
+          <svg viewBox="0 0 640 480" aria-hidden="true">
+            <path fill="#e30a17" d="M0 0h640v480H0z"/>
+            <circle fill="#fff" cx="258.4" cy="240" r="76.8"/>
+            <circle fill="#e30a17" cx="278.4" cy="240" r="64"/>
+            <path fill="#fff" d="M335.7 240l51.8 16.8-32-44.2v54.8l32-44.2z"/>
+          </svg>
+        </button>
+        <button id="langEN" class="flag" title="English" aria-label="English">
+          <!-- Simple US/UK hybrid flag for compact icon -->
+          <svg viewBox="0 0 60 40" aria-hidden="true">
+            <defs><clipPath id="c"><path d="M0,0H60V40H0z"/></clipPath></defs>
+            <g clip-path="url(#c)">
+              <path fill="#b22234" d="M0 0h60v40H0z"/>
+              <path stroke="#fff" stroke-width="6.666" d="M0 6.666h60M0 20h60M0 33.333h60"/>
+              <rect width="24" height="16" fill="#3c3b6e"/>
+              <!-- stars (simplified) -->
+              <g fill="#fff" transform="scale(.8) translate(2,2)">
+                <circle r="1.1" cx="3" cy="3"/><circle r="1.1" cx="7" cy="3"/><circle r="1.1" cx="11" cy="3"/>
+                <circle r="1.1" cx="5" cy="5"/><circle r="1.1" cx="9" cy="5"/>
+                <circle r="1.1" cx="3" cy="7"/><circle r="1.1" cx="7" cy="7"/><circle r="1.1" cx="11" cy="7"/>
+                <circle r="1.1" cx="5" cy="9"/><circle r="1.1" cx="9" cy="9"/>
+                <circle r="1.1" cx="3" cy="11"/><circle r="1.1" cx="7" cy="11"/><circle r="1.1" cx="11" cy="11"/>
+              </g>
+            </g>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="wrap">
       <div class="card">
         <div class="input-row">
           <div>
-            <label for="name">Ürün adı</label>
+            <label for="name" id="labelName">Ürün adı</label>
             <input id="name" type="text" placeholder="Örn: Süt 1L" autocomplete="off" />
           </div>
           <div>
-            <label for="price">Fiyat (₺)</label>
+            <label for="price" id="labelPrice">Fiyat (₺)</label>
             <input id="price" type="text" inputmode="decimal" placeholder="Örn: 39,90" />
           </div>
           <div>
@@ -228,7 +276,7 @@
                 <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M10 12l3 3 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              Sepete Ekle
+              <span id="btnAddText">Sepete Ekle</span>
             </button>
           </div>
         </div>
@@ -238,7 +286,7 @@
   </header>
 
   <main class="wrap" id="emptyState" style="display:none;">
-    <div class="card" style="text-align:center; padding:28px">
+    <div class="card" style="text-align:center; padding:28px" id="emptyMsg">
       Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong>’ye bas.
     </div>
   </main>
@@ -252,44 +300,101 @@
         <span id="count">0 ürün</span>
       </div>
       <div class="total">
-        Toplam:
+        <span id="totalLabel">Toplam:</span>
         <span class="money" id="total">₺0,00</span>
-        <button class="btn warn" id="clearAll" title="Hepsini temizle">Temizle</button>
+        <button class="btn warn" id="clearAll" title="Hepsini temizle"><span id="btnClearText">Temizle</span></button>
       </div>
     </div>
   </footer>
 
-  <div id="toast" class="toast" role="status" aria-live="polite">Sepete atıldı</div>
+  <div id="toast" class="toast" role="status" aria-live="polite">Sepete eklendi</div>
 
   <!-- Düzenleme Bottom Sheet -->
   <div id="sheetBackdrop" class="sheet-backdrop"></div>
   <section id="editSheet" class="sheet" aria-hidden="true">
     <div class="drag"></div>
     <div class="head">
-      <strong>Ürünü Düzenle</strong>
-      <button id="closeSheet" class="ghost" title="Kapat">Kapat ✕</button>
+      <strong id="editTitle">Ürünü Düzenle</strong>
+      <button id="closeSheet" class="ghost" title="Kapat"><span id="btnCloseText">Kapat ✕</span></button>
     </div>
     <div class="body">
       <div class="row">
         <div>
-          <label for="editName">Ürün adı</label>
+          <label for="editName" id="editLabelName">Ürün adı</label>
           <input id="editName" type="text" placeholder="Örn: Süt 1L" />
         </div>
         <div>
-          <label for="editPrice">Fiyat (₺)</label>
+          <label for="editPrice" id="editLabelPrice">Fiyat (₺)</label>
           <input id="editPrice" type="text" inputmode="decimal" placeholder="Örn: 39,90" />
         </div>
       </div>
       <div class="actions">
-        <button id="deleteItem" class="btn" style="border-color:#5a1b1b;background:linear-gradient(180deg,#2a0e0e,#220b0b)">Sil</button>
-        <button id="saveItem" class="btn primary">Kaydet</button>
+        <button id="deleteItem" class="btn" style="border-color:#5a1b1b;background:linear-gradient(180deg,#2a0e0e,#220b0b)"><span id="btnDeleteText">Sil</span></button>
+        <button id="saveItem" class="btn primary"><span id="btnSaveText">Kaydet</span></button>
       </div>
     </div>
   </section>
 
   <script>
-    // --- TL format & parse ---
-    const fmt = new Intl.NumberFormat('tr-TR', { style:'currency', currency:'TRY', minimumFractionDigits:2 });
+    // ===== I18N =====
+    const I18N = {
+      tr: {
+        appTitle: "Smart Basket",
+        tagline: "• hızlı ekle, işaretle, toplamı gör",
+        labelName: "Ürün adı",
+        labelPrice: "Fiyat (₺)",
+        phName: "Örn: Süt 1L",
+        phPrice: "Örn: 39,90",
+        add: "Sepete Ekle",
+        empty: "Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong>’ye bas.",
+        count: n => `${n} ürün`,
+        totalLabel: "Toplam:",
+        clear: "Temizle",
+        clearConfirm: "Tüm ürünler silinsin mi?",
+        toastAdded: "Sepete eklendi",
+        toastUpdated: "Güncellendi",
+        toastDeleted: "Silindi",
+        toggleAria: "Satın alındı olarak işaretle",
+        edit: "Düzenle",
+        delete: "Sil",
+        editTitle: "Ürünü Düzenle",
+        save: "Kaydet",
+        close: "Kapat ✕",
+        dateLocale: "tr-TR"
+      },
+      en: {
+        appTitle: "Smart Basket",
+        tagline: "• add fast, check off, see totals",
+        labelName: "Item name",
+        labelPrice: "Price (₺)",
+        phName: "e.g., Milk 1L",
+        phPrice: "e.g., 39.90",
+        add: "Add to Basket",
+        empty: "No items yet. Type a name and price, then press <strong>Add to Basket</strong>.",
+        count: n => `${n} item${n===1?"":"s"}`,
+        totalLabel: "Total:",
+        clear: "Clear",
+        clearConfirm: "Delete all items?",
+        toastAdded: "Added to basket",
+        toastUpdated: "Updated",
+        toastDeleted: "Deleted",
+        toggleAria: "Mark as purchased",
+        edit: "Edit",
+        delete: "Delete",
+        editTitle: "Edit Item",
+        save: "Save",
+        close: "Close ✕",
+        dateLocale: "en-GB"
+      }
+    };
+
+    let lang = localStorage.getItem('sb-lang') || 'tr';
+    document.documentElement.lang = lang;
+
+    // --- Currency formatter: TRY, locale by language
+    let fmt = new Intl.NumberFormat(I18N[lang].dateLocale, { style:'currency', currency:'TRY', minimumFractionDigits:2 });
+
+    // --- TL parse (accept , or .)
     function parsePrice(v){
       if(typeof v !== 'string') return NaN;
       v = v.replace(/\s+/g,'').replace(/[₺]/g,'').replace(/\./g,'').replace(',', '.');
@@ -300,18 +405,27 @@
     // --- state ---
     const storeKey = 'smart-basket-v1';
     let items = JSON.parse(localStorage.getItem(storeKey) || '[]');
-    let editingIndex = null; // sheet için
+    let editingIndex = null;
 
     // --- els ---
+    const appTitleEl = document.getElementById('appTitle');
+    const taglineEl = document.getElementById('tagline');
     const nameEl = document.getElementById('name');
     const priceEl = document.getElementById('price');
     const addBtn = document.getElementById('addBtn');
+    const addBtnText = document.getElementById('btnAddText');
     const itemsEl = document.getElementById('items');
     const countEl = document.getElementById('count');
     const totalEl = document.getElementById('total');
+    const totalLabelEl = document.getElementById('totalLabel');
     const toastEl = document.getElementById('toast');
     const emptyState = document.getElementById('emptyState');
+    const emptyMsg = document.getElementById('emptyMsg');
     const clearAllBtn = document.getElementById('clearAll');
+    const btnClearText = document.getElementById('btnClearText');
+
+    const labelNameEl = document.getElementById('labelName');
+    const labelPriceEl = document.getElementById('labelPrice');
 
     // sheet
     const sheet = document.getElementById('editSheet');
@@ -322,8 +436,68 @@
     const saveItemBtn = document.getElementById('saveItem');
     const deleteItemBtn = document.getElementById('deleteItem');
 
+    const editTitleEl = document.getElementById('editTitle');
+    const editLabelNameEl = document.getElementById('editLabelName');
+    const editLabelPriceEl = document.getElementById('editLabelPrice');
+    const btnSaveText = document.getElementById('btnSaveText');
+    const btnDeleteText = document.getElementById('btnDeleteText');
+    const btnCloseText = document.getElementById('btnCloseText');
+
+    // Flags
+    const langTR = document.getElementById('langTR');
+    const langEN = document.getElementById('langEN');
+
+    function applyI18N(){
+      const t = I18N[lang];
+
+      document.documentElement.lang = lang;
+      appTitleEl.textContent = t.appTitle;
+      taglineEl.textContent = t.tagline;
+
+      labelNameEl.textContent = t.labelName;
+      labelPriceEl.textContent = t.labelPrice;
+      nameEl.placeholder = t.phName;
+      priceEl.placeholder = t.phPrice;
+
+      addBtn.setAttribute('title', t.add);
+      addBtnText.textContent = t.add;
+
+      emptyMsg.innerHTML = t.empty;
+      totalLabelEl.textContent = t.totalLabel;
+      btnClearText.textContent = t.clear;
+      clearAllBtn.title = t.clear;
+
+      editTitleEl.textContent = t.editTitle;
+      editLabelNameEl.textContent = t.labelName;
+      editLabelPriceEl.textContent = t.labelPrice;
+      btnSaveText.textContent = t.save;
+      btnDeleteText.textContent = t.delete;
+      btnCloseText.textContent = t.close;
+
+      // formatter & re-render
+      fmt = new Intl.NumberFormat(t.dateLocale, { style:'currency', currency:'TRY', minimumFractionDigits:2 });
+
+      // flag active states
+      langTR.classList.toggle('active', lang === 'tr');
+      langEN.classList.toggle('active', lang === 'en');
+
+      render();
+    }
+
+    function setLang(newLang){
+      if(!I18N[newLang]) return;
+      lang = newLang;
+      localStorage.setItem('sb-lang', lang);
+      applyI18N();
+      toast(I18N[lang].toastUpdated);
+    }
+
+    langTR.addEventListener('click', ()=> setLang('tr'));
+    langEN.addEventListener('click', ()=> setLang('en'));
+
     // --- render ---
     function render(){
+      const t = I18N[lang];
       itemsEl.innerHTML = '';
       emptyState.style.display = items.length === 0 ? 'block' : 'none';
 
@@ -334,19 +508,19 @@
         const row = document.createElement('div');
         row.className = 'item' + (it.done ? ' done' : '');
         row.innerHTML = `
-          <button class="ghost" aria-label="Satın alındı olarak işaretle" data-act="toggle" data-idx="${idx}" title="Tik">✓</button>
+          <button class="ghost" aria-label="${t.toggleAria}" data-act="toggle" data-idx="${idx}" title="${t.toggleAria}">✓</button>
           <div>
             <div style="font-weight:800">${escapeHtml(it.name)}</div>
-            <div class="muted" style="font-size:12px">${new Date(it.ts).toLocaleString('tr-TR')}</div>
+            <div class="muted" style="font-size:12px">${new Date(it.ts).toLocaleString(t.dateLocale)}</div>
           </div>
           <span class="pill money">${fmt.format(it.price)}</span>
-          <button class="ghost" aria-label="Düzenle" data-act="edit" data-idx="${idx}" title="Düzenle">✏️</button>
-          <button class="ghost" aria-label="Sil" data-act="del" data-idx="${idx}" title="Sil">🗑️</button>
+          <button class="ghost" aria-label="${t.edit}" data-act="edit" data-idx="${idx}" title="${t.edit}">✏️</button>
+          <button class="ghost" aria-label="${t.delete}" data-act="del" data-idx="${idx}" title="${t.delete}">🗑️</button>
         `;
         itemsEl.appendChild(row);
       });
 
-      countEl.textContent = `${items.length} ürün`;
+      countEl.textContent = I18N[lang].count(items.length);
       totalEl.textContent = fmt.format(sum);
       localStorage.setItem(storeKey, JSON.stringify(items));
     }
@@ -354,7 +528,7 @@
     // --- toast ---
     let toastTimer = null;
     function toast(msg){
-      toastEl.textContent = msg || 'İşlem başarılı';
+      toastEl.textContent = msg || I18N[lang].toastAdded;
       toastEl.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1400);
@@ -362,6 +536,7 @@
 
     // --- add ---
     function addItem(){
+      const t = I18N[lang];
       const name = (nameEl.value || '').trim();
       const price = parsePrice((priceEl.value || '').trim());
       if(!name){ nameEl.focus(); pulse(nameEl); return; }
@@ -372,7 +547,7 @@
       nameEl.value = ''; priceEl.value = '';
       nameEl.focus();
       render();
-      toast('Sepete eklendi');
+      toast(t.toastAdded);
     }
 
     // ufak input pulse
@@ -389,10 +564,12 @@
       const act = btn.dataset.act;
       if(Number.isNaN(idx)) return;
 
+      const t = I18N[lang];
+
       if(act === 'del'){
         items.splice(idx,1);
         render();
-        toast('Silindi');
+        toast(t.toastDeleted);
       }else if(act === 'toggle'){
         items[idx].done = !items[idx].done;
         render();
@@ -407,7 +584,7 @@
 
     clearAllBtn.addEventListener('click', ()=>{
       if(items.length===0) return;
-      if(confirm('Tüm ürünler silinsin mi?')){ items = []; render(); }
+      if(confirm(I18N[lang].clearConfirm)){ items = []; render(); }
     });
 
     // --- sheet controls ---
@@ -432,6 +609,7 @@
 
     saveItemBtn.addEventListener('click', ()=>{
       if(editingIndex===null) return;
+      const t = I18N[lang];
       const name = (editNameEl.value || '').trim();
       const price = parsePrice((editPriceEl.value || '').trim());
       if(!name){ editNameEl.focus(); pulse(editNameEl); return; }
@@ -439,15 +617,16 @@
       items[editingIndex].name = name;
       items[editingIndex].price = price;
       render();
-      toast('Güncellendi');
+      toast(t.toastUpdated);
       closeSheet();
     });
 
     deleteItemBtn.addEventListener('click', ()=>{
       if(editingIndex===null) return;
+      const t = I18N[lang];
       items.splice(editingIndex,1);
       render();
-      toast('Silindi');
+      toast(t.toastDeleted);
       closeSheet();
     });
 
@@ -455,7 +634,7 @@
     function escapeHtml(s){ return s.replace(/[&<>"'`=\/]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;","/":"&#x2F;","`":"&#x60;","=":"&#x3D;"}[c])); }
 
     // init
-    render();
+    applyI18N();
 
     // PWA: Service Worker (göreli yol)
     if ('serviceWorker' in navigator) {
