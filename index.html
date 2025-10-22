@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Sepet & Bütçe Mini App</title>
+  <title>Smart Basket • Market</title>
 
   <!-- PWA -->
   <link rel="manifest" href="manifest.json" />
-  <meta name="theme-color" content="#0f1115" />
+  <meta name="theme-color" content="#0a1110" />
   <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -18,143 +18,184 @@
   <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png" />
 
   <style>
-    /* ==== Global Reset & Mobile Polish ==== */
+    /* ======= Market Teması – Koyu Yeşil / Organik ======= */
     :root{
-      --bg:#0f1115; --bg2:#0d1017; --card:#171923; --muted:#8a93a8; --text:#e5e7ef;
-      --accent:#5b9cff; --accent-2:#22c55e; --danger:#ef4444; --border:#24283a;
-      --ring:#3a66ff55;
+      --bg:#0a1110; --bg2:#0b1413; --card:#0f1817;
+      --muted:#8aa39b; --text:#eaf5f1;
+      --primary:#16a34a;      /* market yeşili */
+      --primary-2:#22c55e;    /* açık yeşil */
+      --accent:#f59e0b;       /* amber vurgular */
+      --danger:#ef4444;
+      --border:#17312c;
+      --ring:#16a34a55;
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
     }
     *{box-sizing:border-box; -webkit-tap-highlight-color: transparent}
     html{
       height:100%;
-      background:var(--bg);
-      color-scheme: dark; /* iOS klavye/scrollbar koyu */
-      overscroll-behavior-y: none; /* iOS bounce etkisini azalt */
+      background:var(--bg); color-scheme: dark;
+      overscroll-behavior-y: none;
     }
     body{
-      min-height:100dvh;
-      margin:0;
+      min-height:100dvh; margin:0;
       font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;
       color:var(--text);
       background:
-        radial-gradient(1200px 600px at 80% -10%, #15305866 0%, transparent 60%),
-        radial-gradient(800px 500px at -10% 20%, #1a3a2f55 0%, transparent 55%),
+        radial-gradient(1200px 600px at 80% -10%, #0a2f2150 0%, transparent 60%),
+        radial-gradient(900px 520px at -10% 20%, #134e3240 0%, transparent 55%),
         linear-gradient(180deg, var(--bg2) 0%, var(--bg) 40%);
       background-attachment: fixed;
       display:flex; flex-direction:column; gap:16px;
       overflow-x:hidden;
     }
-    ::selection{background:#5b9cff55}
+    ::selection{background:#16a34a55}
 
-    /* ==== Layout ==== */
+    /* ======= Üst Bar ======= */
     header{
-      position:sticky; top:0; z-index:3;
+      position:sticky; top:0; z-index:10;
       backdrop-filter:saturate(120%) blur(8px);
-      background:color-mix(in oklab, #0a0e18 70%, transparent);
+      background:color-mix(in oklab, #081210 86%, transparent);
       border-bottom:1px solid var(--border);
       padding-top:calc(8px + var(--safe-top));
     }
-    .wrap{max-width:880px; margin:0 auto; padding:18px 20px}
-    .title{display:flex; align-items:center; gap:12px; margin:0 0 10px}
-    .title svg{width:26px; height:26px; filter:drop-shadow(0 2px 8px #5b9cff44)}
+    .wrap{max-width:920px; margin:0 auto; padding:18px 20px}
+    .title{display:flex; align-items:center; gap:12px; margin:0 0 8px}
+    .title svg{width:28px; height:28px; color:var(--primary);
+      filter:drop-shadow(0 2px 10px #16a34a55)}
     .muted{color:var(--muted); font-size:14px}
 
     .card{
-      background:color-mix(in oklab, var(--card) 85%, #0a0d14);
+      background:color-mix(in oklab, var(--card) 90%, #071412);
       border:1px solid var(--border);
-      border-radius:16px; padding:14px;
+      border-radius:18px; padding:14px;
       box-shadow:0 10px 30px #00000040, inset 0 1px 0 #ffffff08;
       animation:card-in .45s cubic-bezier(.2,.7,.2,1);
     }
     @keyframes card-in{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
 
-    /* ==== Inputs ==== */
+    /* ======= Giriş Alanı ======= */
     .input-row{
-      display:grid; grid-template-columns:1.2fr .6fr auto; gap:10px; align-items:end;
+      display:grid; grid-template-columns:1.3fr .7fr auto; gap:10px; align-items:end;
     }
     label{font-size:12px; color:var(--muted); display:block; margin:0 0 6px}
     input[type="text"], input[type="number"]{
-      width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border);
-      background:#0c1018; color:var(--text); outline:none;
+      width:100%; padding:12px 14px; border-radius:14px; border:1px solid var(--border);
+      background:#0c1513; color:var(--text); outline:none;
       transition:border-color .18s ease, box-shadow .18s ease, transform .06s ease;
     }
     input:focus{
-      border-color:#2f3f7a; box-shadow:0 0 0 6px var(--ring);
+      border-color:#1d5d45; box-shadow:0 0 0 6px var(--ring);
       transform:translateY(-1px);
     }
-    input::placeholder{color:#7c86a3}
+    input::placeholder{color:#7fa399}
 
-    /* ==== Buttons ==== */
-    .icon{
+    /* ======= Butonlar + Ripple ======= */
+    .btn{
       display:inline-flex; align-items:center; gap:8px; padding:12px 14px;
-      border-radius:12px; border:1px solid #2a2f45; background:linear-gradient(180deg,#111626,#0e1320);
-      color:#dfe3f5; cursor:pointer; transition:transform .08s ease, filter .18s ease, border-color .18s ease;
-      font-weight:700; position:relative; overflow:hidden;
+      border-radius:14px; border:1px solid #173e31;
+      background:linear-gradient(180deg,#0f1f1a,#0c1915);
+      color:#e9fff6; cursor:pointer; font-weight:800; letter-spacing:.2px;
+      transition:transform .08s ease, filter .18s ease, border-color .18s ease, background .18s ease;
+      position:relative; overflow:hidden; will-change:transform;
     }
-    .icon svg{width:18px; height:18px}
-    .icon:active{transform:scale(.98)}
-    .icon:hover{border-color:#3a4163; filter:brightness(1.06)}
-    .icon::after{ /* ripple */
+    .btn svg{width:18px; height:18px}
+    .btn:hover{border-color:#256c50; filter:brightness(1.06)}
+    .btn:active{transform:scale(.98)}
+    .btn::after{
       content:""; position:absolute; inset:auto auto 0 0; width:0; height:0; border-radius:50%;
-      background:#5b9cff33; transform:translate(-50%,50%); pointer-events:none;
+      background:#16a34a33; transform:translate(-50%,50%); pointer-events:none;
     }
-    .icon:active::after{ width:220%; height:220%; transition:width .28s ease, height .28s ease; }
+    .btn:active::after{ width:220%; height:220%; transition:width .28s ease, height .28s ease; }
 
-    /* ==== Items ==== */
+    .btn.primary{
+      background:linear-gradient(180deg,#0f281f,#0b2019);
+      border-color:#1b5f46;
+      box-shadow:inset 0 1px 0 #ffffff10, 0 8px 18px #0b3b2a55;
+    }
+    .btn.warn{
+      background:linear-gradient(180deg,#2b1f0a,#241a08);
+      border-color:#7a5113;
+    }
+
+    /* ======= Liste ======= */
     .items{display:flex; flex-direction:column; gap:10px; margin-top:12px}
     .item{
-      display:grid; grid-template-columns:auto 1fr auto auto; gap:10px; align-items:center;
-      padding:10px 12px; border:1px dashed #2a3147; border-radius:12px; background:#0e121a;
-      animation:item-in .35s cubic-bezier(.21,.7,.18,1);
+      display:grid; grid-template-columns:auto 1fr auto auto auto; gap:10px; align-items:center;
+      padding:12px 12px; border:1px solid #1b3c33; border-radius:14px;
+      background:linear-gradient(180deg,#0c1614,#0a1412);
+      animation:item-in .28s cubic-bezier(.21,.7,.18,1);
     }
     @keyframes item-in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
-
     .item.done{opacity:.6; text-decoration:line-through}
-    .pill{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid #2a3147; color:#b7c0d9}
-    .money{font-variant-numeric:tabular-nums; font-weight:700}
-    .ghost{
-      background:transparent; border:1px solid #2a3147; color:#cbd5f1; border-radius:10px;
-      padding:8px 10px; cursor:pointer; transition:transform .08s ease, border-color .18s ease;
-    }
-    .ghost:active{transform:scale(.97)}
-    .ghost:hover{border-color:#3a4163}
+    .pill{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid #1b3c33; color:#cbe5da; background:#0c1714}
+    .money{font-variant-numeric:tabular-nums; font-weight:800}
 
-    /* ==== Footer totals (safe-area aware) ==== */
+    .ghost{
+      background:transparent; border:1px solid #1b3c33; color:#d2efe3; border-radius:10px;
+      padding:8px 10px; cursor:pointer; transition:transform .08s ease, border-color .18s ease, background .18s ease;
+    }
+    .ghost:hover{border-color:#2a6a54; background:#0e1d19}
+    .ghost:active{transform:scale(.97)}
+
+    /* ======= Alt Toplam Barı ======= */
     footer.totals{
-      position:sticky; bottom:0; z-index:3;
-      background:color-mix(in oklab, #0a0e18 88%, transparent);
+      position:sticky; bottom:0; z-index:8;
+      background:color-mix(in oklab, #071512 88%, transparent);
       border-top:1px solid var(--border); backdrop-filter:saturate(120%) blur(8px);
       padding-bottom:calc(8px + var(--safe-bottom));
     }
     .totals-row{display:flex; align-items:center; justify-content:space-between; gap:16px}
     .badge{
-      display:inline-flex; align-items:center; gap:6px; background:#101624; border:1px solid #233053;
-      padding:8px 10px; border-radius:12px; font-weight:600
+      display:inline-flex; align-items:center; gap:6px; background:#0d1c17; border:1px solid #174b39;
+      padding:8px 10px; border-radius:12px; font-weight:700
     }
     .badge svg{width:16px; height:16px}
     .total{
-      display:flex; align-items:center; gap:12px; font-weight:800; font-size:18px;
-      background:linear-gradient(180deg,#0f1524,#0c1220); border:1px solid #243055; padding:10px 14px; border-radius:12px;
-      box-shadow:inset 0 1px 0 #ffffff08, 0 6px 20px #00000040;
+      display:flex; align-items:center; gap:12px; font-weight:900; font-size:18px;
+      background:linear-gradient(180deg,#0f221c,#0b1915); border:1px solid #1a5a45; padding:10px 14px; border-radius:12px;
+      box-shadow:inset 0 1px 0 #ffffff08, 0 6px 20px #03171280;
     }
 
-    /* ==== Toast ==== */
+    /* ======= Toast ======= */
     .toast{
       position:fixed; right:20px; bottom:calc(88px + var(--safe-bottom)); z-index:9999; display:none;
-      background:#0c1a12; border:1px solid #1c3d2a; color:#dbffe6;
+      background:#0b1f17; border:1px solid #1b3f32; color:#dfffee;
       padding:12px 14px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.35)
     }
     .toast.show{display:block; animation:slideup .35s ease}
     @keyframes slideup{from{transform:translateY(12px); opacity:.4} to{transform:translateY(0); opacity:1}}
 
-    /* ==== Mobile tweaks ==== */
+    /* ======= Düzenleme Bottom Sheet ======= */
+    .sheet-backdrop{
+      position:fixed; inset:0; background:#00000088; display:none; z-index:50;
+    }
+    .sheet{
+      position:fixed; left:0; right:0; bottom:0; z-index:60;
+      background:linear-gradient(180deg,#0e1916,#0a1311);
+      border-top:1px solid #1a4a3a; box-shadow:0 -20px 40px #00000080;
+      border-top-left-radius:18px; border-top-right-radius:18px;
+      transform:translateY(110%); transition:transform .35s cubic-bezier(.2,.7,.2,1);
+      will-change:transform;
+    }
+    .sheet.open{transform:translateY(0)}
+    .sheet .head{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:14px 18px; border-bottom:1px solid #123a2d;
+    }
+    .drag{width:48px; height:4px; border-radius:999px; background:#285a47; margin:6px auto 10px}
+    .sheet .body{padding:8px 18px 18px}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .sheet input{border-radius:12px; background:#0b1513; border:1px solid #184235}
+    .sheet .actions{display:flex; gap:10px; margin-top:12px; justify-content:flex-end}
+
+    /* ======= Mobile tweaks ======= */
     @media (max-width:640px){
       .wrap{padding:16px 14px}
       .input-row{grid-template-columns:1fr 1fr auto}
-      .item{grid-template-columns:auto 1fr auto}
-      .item .pill{display:none}
+      .item{grid-template-columns:auto 1fr auto auto auto}
+      .pill{display:none}
+      .row{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -167,8 +208,9 @@
           <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="18" cy="21" r="1" fill="currentColor"/>
         </svg>
-        Smart Basket <span class="muted">• hızlı not al, sepete ekle, toplamı gör</span>
+        Smart Basket <span class="muted">• hızlı ekle, işaretle, toplamı gör</span>
       </h1>
+
       <div class="card">
         <div class="input-row">
           <div>
@@ -181,7 +223,7 @@
           </div>
           <div>
             <label style="visibility:hidden">.</label>
-            <button id="addBtn" class="icon" title="Sepete ekle">
+            <button id="addBtn" class="btn primary" title="Sepete ekle">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M10 12l3 3 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -196,7 +238,7 @@
   </header>
 
   <main class="wrap" id="emptyState" style="display:none;">
-    <div class="card" style="text-align:center; padding:30px">
+    <div class="card" style="text-align:center; padding:28px">
       Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong>’ye bas.
     </div>
   </main>
@@ -212,12 +254,38 @@
       <div class="total">
         Toplam:
         <span class="money" id="total">₺0,00</span>
-        <button class="ghost" id="clearAll" title="Hepsini temizle">Temizle</button>
+        <button class="btn warn" id="clearAll" title="Hepsini temizle">Temizle</button>
       </div>
     </div>
   </footer>
 
   <div id="toast" class="toast" role="status" aria-live="polite">Sepete atıldı</div>
+
+  <!-- Düzenleme Bottom Sheet -->
+  <div id="sheetBackdrop" class="sheet-backdrop"></div>
+  <section id="editSheet" class="sheet" aria-hidden="true">
+    <div class="drag"></div>
+    <div class="head">
+      <strong>Ürünü Düzenle</strong>
+      <button id="closeSheet" class="ghost" title="Kapat">Kapat ✕</button>
+    </div>
+    <div class="body">
+      <div class="row">
+        <div>
+          <label for="editName">Ürün adı</label>
+          <input id="editName" type="text" placeholder="Örn: Süt 1L" />
+        </div>
+        <div>
+          <label for="editPrice">Fiyat (₺)</label>
+          <input id="editPrice" type="text" inputmode="decimal" placeholder="Örn: 39,90" />
+        </div>
+      </div>
+      <div class="actions">
+        <button id="deleteItem" class="btn" style="border-color:#5a1b1b;background:linear-gradient(180deg,#2a0e0e,#220b0b)">Sil</button>
+        <button id="saveItem" class="btn primary">Kaydet</button>
+      </div>
+    </div>
+  </section>
 
   <script>
     // --- TL format & parse ---
@@ -232,6 +300,7 @@
     // --- state ---
     const storeKey = 'smart-basket-v1';
     let items = JSON.parse(localStorage.getItem(storeKey) || '[]');
+    let editingIndex = null; // sheet için
 
     // --- els ---
     const nameEl = document.getElementById('name');
@@ -243,6 +312,15 @@
     const toastEl = document.getElementById('toast');
     const emptyState = document.getElementById('emptyState');
     const clearAllBtn = document.getElementById('clearAll');
+
+    // sheet
+    const sheet = document.getElementById('editSheet');
+    const sheetBackdrop = document.getElementById('sheetBackdrop');
+    const closeSheetBtn = document.getElementById('closeSheet');
+    const editNameEl = document.getElementById('editName');
+    const editPriceEl = document.getElementById('editPrice');
+    const saveItemBtn = document.getElementById('saveItem');
+    const deleteItemBtn = document.getElementById('deleteItem');
 
     // --- render ---
     function render(){
@@ -258,13 +336,13 @@
         row.innerHTML = `
           <button class="ghost" aria-label="Satın alındı olarak işaretle" data-act="toggle" data-idx="${idx}" title="Tik">✓</button>
           <div>
-            <div style="font-weight:700">${escapeHtml(it.name)}</div>
+            <div style="font-weight:800">${escapeHtml(it.name)}</div>
             <div class="muted" style="font-size:12px">${new Date(it.ts).toLocaleString('tr-TR')}</div>
           </div>
           <span class="pill money">${fmt.format(it.price)}</span>
+          <button class="ghost" aria-label="Düzenle" data-act="edit" data-idx="${idx}" title="Düzenle">✏️</button>
           <button class="ghost" aria-label="Sil" data-act="del" data-idx="${idx}" title="Sil">🗑️</button>
         `;
-        row.style.willChange = 'transform, opacity';
         itemsEl.appendChild(row);
       });
 
@@ -276,13 +354,13 @@
     // --- toast ---
     let toastTimer = null;
     function toast(msg){
-      toastEl.textContent = msg || 'Sepete atıldı';
+      toastEl.textContent = msg || 'İşlem başarılı';
       toastEl.classList.add('show');
       clearTimeout(toastTimer);
       toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1400);
     }
 
-    // --- handlers ---
+    // --- add ---
     function addItem(){
       const name = (nameEl.value || '').trim();
       const price = parsePrice((priceEl.value || '').trim());
@@ -290,11 +368,11 @@
       if(!Number.isFinite(price) || price < 0){ priceEl.focus(); pulse(priceEl); return; }
 
       const item = { name, price, done:false, ts: Date.now() };
-      items.unshift(item); // yeni en üstte
+      items.unshift(item);
       nameEl.value = ''; priceEl.value = '';
       nameEl.focus();
       render();
-      toast('Sepete atıldı');
+      toast('Sepete eklendi');
     }
 
     // ufak input pulse
@@ -303,6 +381,7 @@
       setTimeout(()=> el.style.boxShadow = '', 250);
     }
 
+    // --- list actions ---
     itemsEl.addEventListener('click', (e)=>{
       const btn = e.target.closest('button');
       if(!btn) return;
@@ -313,9 +392,12 @@
       if(act === 'del'){
         items.splice(idx,1);
         render();
+        toast('Silindi');
       }else if(act === 'toggle'){
         items[idx].done = !items[idx].done;
         render();
+      }else if(act === 'edit'){
+        openSheet(idx);
       }
     });
 
@@ -328,13 +410,54 @@
       if(confirm('Tüm ürünler silinsin mi?')){ items = []; render(); }
     });
 
+    // --- sheet controls ---
+    function openSheet(idx){
+      editingIndex = idx;
+      const it = items[idx];
+      editNameEl.value = it.name;
+      editPriceEl.value = it.price.toString().replace('.', ',');
+      sheet.classList.add('open');
+      sheetBackdrop.style.display = 'block';
+      sheet.setAttribute('aria-hidden','false');
+      setTimeout(()=> editNameEl.focus(), 50);
+    }
+    function closeSheet(){
+      editingIndex = null;
+      sheet.classList.remove('open');
+      sheetBackdrop.style.display = 'none';
+      sheet.setAttribute('aria-hidden','true');
+    }
+    sheetBackdrop.addEventListener('click', closeSheet);
+    closeSheetBtn.addEventListener('click', closeSheet);
+
+    saveItemBtn.addEventListener('click', ()=>{
+      if(editingIndex===null) return;
+      const name = (editNameEl.value || '').trim();
+      const price = parsePrice((editPriceEl.value || '').trim());
+      if(!name){ editNameEl.focus(); pulse(editNameEl); return; }
+      if(!Number.isFinite(price) || price < 0){ editPriceEl.focus(); pulse(editPriceEl); return; }
+      items[editingIndex].name = name;
+      items[editingIndex].price = price;
+      render();
+      toast('Güncellendi');
+      closeSheet();
+    });
+
+    deleteItemBtn.addEventListener('click', ()=>{
+      if(editingIndex===null) return;
+      items.splice(editingIndex,1);
+      render();
+      toast('Silindi');
+      closeSheet();
+    });
+
     // basic XSS guard
     function escapeHtml(s){ return s.replace(/[&<>"'`=\/]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;","/":"&#x2F;","`":"&#x60;","=":"&#x3D;"}[c])); }
 
     // init
     render();
 
-    // PWA: Service Worker kaydı (GitHub Pages için göreli yol)
+    // PWA: Service Worker (göreli yol)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js').catch(console.error);
