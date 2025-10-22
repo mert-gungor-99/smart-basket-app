@@ -6,18 +6,18 @@
   <title>Smart Basket • Market</title>
 
   <!-- PWA -->
-  <link rel="manifest" href="manifest.json?v=3" />
+  <link rel="manifest" href="./manifest.json?v=4" />
   <meta name="theme-color" content="#0a1110" />
   <!-- iOS PWA -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Smart Basket" />
   <meta name="format-detection" content="telephone=no" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
 
-  <!-- Favicons (opsiyonel) -->
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png" />
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png" />
 
   <style>
     /* ======= Market Teması – Koyu Yeşil / Organik ======= */
@@ -43,7 +43,6 @@
       overscroll-behavior-y: none;
     }
     body{
-      /* 100dvh + iOS fallback */
       min-height:calc(max(100dvh, 100 * var(--svh)));
       margin:0;
       font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;
@@ -55,13 +54,11 @@
       background-attachment: fixed;
       display:flex; flex-direction:column; gap:16px;
       overflow-x:hidden;
-      -webkit-user-select:none; user-select:none; /* iOS’ta istenmeyen seçimi azaltır */
+      -webkit-user-select:none; user-select:none;
     }
-    /* input alanlarında seçim serbest */
     input, input::selection, textarea, textarea::selection { -webkit-user-select:text; user-select:text; }
     ::selection{background:#16a34a55}
 
-    /* ======= Üst Bar ======= */
     header{
       position:sticky; top:0; z-index:10;
       backdrop-filter:saturate(120%) blur(8px);
@@ -75,15 +72,12 @@
       filter:drop-shadow(0 2px 10px #16a34a55)}
     .muted{color:var(--muted); font-size:14px}
 
-    /* Dil seçim alanı */
-    .lang-switch{
-      margin-left:auto; display:flex; align-items:center; gap:8px;
-    }
+    .lang-switch{ margin-left:auto; display:flex; align-items:center; gap:8px; }
     .flag{
       width:30px; height:22px; border-radius:6px; border:1px solid #1b3c33;
       background:#0c1513; cursor:pointer; display:grid; place-items:center;
       transition:transform .06s ease, border-color .18s ease, background .18s ease, filter .18s ease;
-      touch-action: manipulation; /* iOS çift dokunma zoom’u azalt */
+      touch-action: manipulation;
     }
     .flag:active{transform:scale(.96)}
     .flag.active{border-color:#22c55e; box-shadow:0 0 0 4px #16a34a33}
@@ -98,17 +92,13 @@
     }
     @keyframes card-in{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
 
-    /* ======= Giriş Alanı ======= */
-    .input-row{
-      display:grid; grid-template-columns:1.3fr .7fr auto; gap:10px; align-items:end;
-    }
+    .input-row{ display:grid; grid-template-columns:1.3fr .7fr auto; gap:10px; align-items:end; }
     label{font-size:12px; color:var(--muted); display:block; margin:0 0 6px}
     input[type="text"], input[type="number"]{
       width:100%; padding:12px 14px; border-radius:14px; border:1px solid var(--border);
       background:#0c1513; color:var(--text); outline:none;
       transition:border-color .18s ease, box-shadow .18s ease, transform .06s ease;
-      -webkit-appearance:none; appearance:none;
-      touch-action: manipulation;
+      -webkit-appearance:none; appearance:none; touch-action: manipulation;
     }
     input:focus{
       border-color:#1d5d45; box-shadow:0 0 0 6px var(--ring);
@@ -116,7 +106,6 @@
     }
     input::placeholder{color:#7fa399}
 
-    /* ======= Butonlar + Ripple ======= */
     .btn{
       display:inline-flex; align-items:center; gap:8px; padding:12px 14px;
       border-radius:14px; border:1px solid #173e31;
@@ -124,7 +113,7 @@
       color:#e9fff6; cursor:pointer; font-weight:800; letter-spacing:.2px;
       transition:transform .08s ease, filter .18s ease, border-color .18s ease, background .18s ease;
       position:relative; overflow:hidden; will-change:transform;
-      touch-action: manipulation; /* iOS çift dokunma zoom’u azalt */
+      touch-action: manipulation;
     }
     .btn svg{width:18px; height:18px}
     .btn:hover{border-color:#256c50; filter:brightness(1.06)}
@@ -134,18 +123,9 @@
       background:#16a34a33; transform:translate(-50%,50%); pointer-events:none;
     }
     .btn:active::after{ width:220%; height:220%; transition:width .28s ease, height .28s ease; }
+    .btn.primary{ background:linear-gradient(180deg,#0f281f,#0b2019); border-color:#1b5f46; box-shadow:inset 0 1px 0 #ffffff10, 0 8px 18px #0b3b2a55; }
+    .btn.warn{ background:linear-gradient(180deg,#2b1f0a,#241a08); border-color:#7a5113; }
 
-    .btn.primary{
-      background:linear-gradient(180deg,#0f281f,#0b2019);
-      border-color:#1b5f46;
-      box-shadow:inset 0 1px 0 #ffffff10, 0 8px 18px #0b3b2a55;
-    }
-    .btn.warn{
-      background:linear-gradient(180deg,#2b1f0a,#241a08);
-      border-color:#7a5113;
-    }
-
-    /* ======= Liste ======= */
     .items{display:flex; flex-direction:column; gap:10px; margin-top:12px}
     .item{
       display:grid; grid-template-columns:auto 1fr auto auto auto; gap:10px; align-items:center;
@@ -166,7 +146,6 @@
     .ghost:hover{border-color:#2a6a54; background:#0e1d19}
     .ghost:active{transform:scale(.97)}
 
-    /* ======= Alt Toplam Barı ======= */
     footer.totals{
       position:sticky; bottom:0; z-index:8;
       background:color-mix(in oklab, #071512 88%, transparent);
@@ -174,10 +153,8 @@
       padding-bottom:calc(8px + var(--safe-bottom));
     }
     .totals-row{display:flex; align-items:center; justify-content:space-between; gap:16px}
-    .badge{
-      display:inline-flex; align-items:center; gap:6px; background:#0d1c17; border:1px solid #174b39;
-      padding:8px 10px; border-radius:12px; font-weight:700
-    }
+    .badge{ display:inline-flex; align-items:center; gap:6px; background:#0d1c17; border:1px solid #174b39;
+      padding:8px 10px; border-radius:12px; font-weight:700}
     .badge svg{width:16px; height:16px}
     .total{
       display:flex; align-items:center; gap:12px; font-weight:900; font-size:18px;
@@ -185,7 +162,6 @@
       box-shadow:inset 0 1px 0 #ffffff08, 0 6px 20px #03171280;
     }
 
-    /* ======= Toast ======= */
     .toast{
       position:fixed; right:20px; bottom:calc(88px + var(--safe-bottom)); z-index:9999; display:none;
       background:#0b1f17; border:1px solid #1b3f32; color:#dfffee;
@@ -194,10 +170,7 @@
     .toast.show{display:block; animation:slideup .35s ease}
     @keyframes slideup{from{transform:translateY(12px); opacity:.4} to{transform:translateY(0); opacity:1}}
 
-    /* ======= Düzenleme Bottom Sheet ======= */
-    .sheet-backdrop{
-      position:fixed; inset:0; background:#00000088; display:none; z-index:50;
-    }
+    .sheet-backdrop{ position:fixed; inset:0; background:#00000088; display:none; z-index:50; }
     .sheet{
       position:fixed; left:0; right:0; bottom:0; z-index:60;
       background:linear-gradient(180deg,#0e1916,#0a1311);
@@ -207,17 +180,13 @@
       will-change:transform;
     }
     .sheet.open{transform:translateY(0)}
-    .sheet .head{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      padding:14px 18px; border-bottom:1px solid #123a2d;
-    }
+    .sheet .head{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 18px; border-bottom:1px solid #123a2d;}
     .drag{width:48px; height:4px; border-radius:999px; background:#285a47; margin:6px auto 10px}
     .sheet .body{padding:8px 18px 18px}
     .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
     .sheet input{border-radius:12px; background:#0b1513; border:1px solid #184235}
     .sheet .actions{display:flex; gap:10px; margin-top:12px; justify-content:flex-end}
 
-    /* ======= iOS A2HS Bant ======= */
     .a2hs{
       position:fixed; left:12px; right:12px; bottom:calc(100px + var(--safe-bottom));
       background:#0e1916; color:#eaf5f1; border:1px solid #1b3f32; border-radius:14px;
@@ -230,7 +199,6 @@
     .a2hs .close{background:transparent; border:1px solid #1b3c33; color:#cfe9de; border-radius:10px; padding:6px 8px; cursor:pointer}
     .a2hs.show{display:block}
 
-    /* ======= Mobile tweaks ======= */
     @media (max-width:640px){
       .wrap{padding:16px 14px}
       .input-row{grid-template-columns:1fr 1fr auto}
@@ -244,7 +212,6 @@
   <header>
     <div class="wrap" style="display:flex; align-items:flex-start; gap:12px">
       <h1 class="title" style="margin-right:auto">
-        <!-- cart icon -->
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
           <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
           <circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="18" cy="21" r="1" fill="currentColor"/>
@@ -256,7 +223,6 @@
       <!-- Language Switch -->
       <div class="lang-switch" aria-label="Language">
         <button id="langTR" class="flag" title="Türkçe" aria-label="Türkçe">
-          <!-- Turkey flag -->
           <svg viewBox="0 0 640 480" aria-hidden="true">
             <path fill="#e30a17" d="M0 0h640v480H0z"/>
             <circle fill="#fff" cx="258.4" cy="240" r="76.8"/>
@@ -265,14 +231,12 @@
           </svg>
         </button>
         <button id="langEN" class="flag" title="English" aria-label="English">
-          <!-- Simple US/UK hybrid flag for compact icon -->
           <svg viewBox="0 0 60 40" aria-hidden="true">
             <defs><clipPath id="c"><path d="M0,0H60V40H0z"/></clipPath></defs>
             <g clip-path="url(#c)">
               <path fill="#b22234" d="M0 0h60v40H0z"/>
               <path stroke="#fff" stroke-width="6.666" d="M0 6.666h60M0 20h60M0 33.333h60"/>
               <rect width="24" height="16" fill="#3c3b6e"/>
-              <!-- stars (simplified) -->
               <g fill="#fff" transform="scale(.8) translate(2,2)">
                 <circle r="1.1" cx="3" cy="3"/><circle r="1.1" cx="7" cy="3"/><circle r="1.1" cx="11" cy="3"/>
                 <circle r="1.1" cx="5" cy="5"/><circle r="1.1" cx="9" cy="5"/>
@@ -294,8 +258,8 @@
             <input id="name" type="text" placeholder="Örn: Süt 1L" autocomplete="off" />
           </div>
           <div>
-            <label for="price" id="labelPrice">Fiyat (₺)</label>
-            <input id="price" type="text" inputmode="decimal" placeholder="Örn: 39,90" />
+            <label for="price" id="labelPrice">Fiyat ($)</label>
+            <input id="price" type="text" inputmode="decimal" placeholder="e.g., 12.99" />
           </div>
           <div>
             <label style="visibility:hidden">.</label>
@@ -329,7 +293,7 @@
       </div>
       <div class="total">
         <span id="totalLabel">Toplam:</span>
-        <span class="money" id="total">₺0,00</span>
+        <span class="money" id="total">$0.00</span>
         <button class="btn warn" id="clearAll" title="Hepsini temizle"><span id="btnClearText">Temizle</span></button>
       </div>
     </div>
@@ -352,8 +316,8 @@
           <input id="editName" type="text" placeholder="Örn: Süt 1L" />
         </div>
         <div>
-          <label for="editPrice" id="editLabelPrice">Fiyat (₺)</label>
-          <input id="editPrice" type="text" inputmode="decimal" placeholder="Örn: 39,90" />
+          <label for="editPrice" id="editLabelPrice">Fiyat ($)</label>
+          <input id="editPrice" type="text" inputmode="decimal" placeholder="e.g., 12.99" />
         </div>
       </div>
       <div class="actions">
@@ -375,15 +339,19 @@
   </div>
 
   <script>
+    // ===== Ayarlar =====
+    const CURRENCY = 'USD';       // sabit USD
+    const CURRENCY_SYMBOL = '$';
+
     // ===== I18N =====
     const I18N = {
       tr: {
         appTitle: "Smart Basket",
         tagline: "• hızlı ekle, işaretle, toplamı gör",
         labelName: "Ürün adı",
-        labelPrice: "Fiyat (₺)",
+        labelPrice: `Fiyat (${CURRENCY_SYMBOL})`,
         phName: "Örn: Süt 1L",
-        phPrice: "Örn: 39,90",
+        phPrice: "Örn: 12,99",
         add: "Sepete Ekle",
         empty: "Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong>’ye bas.",
         count: n => `${n} ürün`,
@@ -407,9 +375,9 @@
         appTitle: "Smart Basket",
         tagline: "• add fast, check off, see totals",
         labelName: "Item name",
-        labelPrice: "Price (₺)",
+        labelPrice: `Price (${CURRENCY_SYMBOL})`,
         phName: "e.g., Milk 1L",
-        phPrice: "e.g., 39.90",
+        phPrice: "e.g., 12.99",
         add: "Add to Basket",
         empty: "No items yet. Type a name and price, then press <strong>Add to Basket</strong>.",
         count: n => `${n} item${n===1?"":"s"}`,
@@ -425,7 +393,7 @@
         editTitle: "Edit Item",
         save: "Save",
         close: "Close ✕",
-        dateLocale: "en-GB",
+        dateLocale: "en-US",
         a2hsHint: "Use like an app: Share → Add to Home Screen",
         a2hsClose: "Close"
       }
@@ -434,13 +402,18 @@
     let lang = localStorage.getItem('sb-lang') || 'tr';
     document.documentElement.lang = lang;
 
-    // --- Currency formatter: TRY, locale by language
-    let fmt = new Intl.NumberFormat(I18N[lang].dateLocale, { style:'currency', currency:'TRY', minimumFractionDigits:2 });
+    // --- Currency formatter: USD
+    let fmt = new Intl.NumberFormat(I18N[lang].dateLocale, {
+      style:'currency', currency: CURRENCY, minimumFractionDigits:2
+    });
 
-    // --- TL parse (accept , or .)
+    // --- price parse (accept $ , .)
     function parsePrice(v){
       if(typeof v !== 'string') return NaN;
-      v = v.replace(/\s+/g,'').replace(/[₺]/g,'').replace(/\./g,'').replace(',', '.');
+      v = v.replace(/\s+/g,'')
+           .replace(/[${}]/g,'')      // $ ve süslü parantezleri temizle (içerik yapışmasın)
+           .replace(/[₺]/g,'')
+           .replace(',', '.');
       const n = parseFloat(v);
       return Number.isFinite(n) ? n : NaN;
     }
@@ -470,7 +443,6 @@
     const labelNameEl = document.getElementById('labelName');
     const labelPriceEl = document.getElementById('labelPrice');
 
-    // sheet
     const sheet = document.getElementById('editSheet');
     const sheetBackdrop = document.getElementById('sheetBackdrop');
     const closeSheetBtn = document.getElementById('closeSheet');
@@ -486,11 +458,9 @@
     const btnDeleteText = document.getElementById('btnDeleteText');
     const btnCloseText = document.getElementById('btnCloseText');
 
-    // Flags
     const langTR = document.getElementById('langTR');
     const langEN = document.getElementById('langEN');
 
-    // iOS A2HS
     const a2hs = document.getElementById('a2hs');
     const a2hsClose = document.getElementById('a2hsClose');
 
@@ -521,16 +491,14 @@
       btnDeleteText.textContent = t.delete;
       btnCloseText.textContent = t.close;
 
-      // formatter & re-render
-      fmt = new Intl.NumberFormat(t.dateLocale, { style:'currency', currency:'TRY', minimumFractionDigits:2 });
+      fmt = new Intl.NumberFormat(t.dateLocale, { style:'currency', currency: CURRENCY, minimumFractionDigits:2 });
 
-      // flag active states
       langTR.classList.toggle('active', lang === 'tr');
       langEN.classList.toggle('active', lang === 'en');
 
-      // iOS A2HS içeriği
       if (a2hs) {
-        a2hs.querySelector('.hint').innerHTML = `<strong>${t.a2hsHint.split(':')[0]}:</strong> ${t.a2hsHint.split(':')[1] || ''}`;
+        const [lead, rest] = t.a2hsHint.split(':');
+        a2hs.querySelector('.hint').innerHTML = `<strong>${lead}:</strong> ${rest || ''}`;
         a2hsClose.textContent = t.a2hsClose;
       }
 
@@ -603,7 +571,6 @@
       toast(t.toastAdded);
     }
 
-    // ufak input pulse
     function pulse(el){
       el.style.boxShadow = '0 0 0 6px #ef444455';
       setTimeout(()=> el.style.boxShadow = '', 250);
@@ -645,7 +612,7 @@
       editingIndex = idx;
       const it = items[idx];
       editNameEl.value = it.name;
-      editPriceEl.value = it.price.toString().replace('.', ',');
+      editPriceEl.value = it.price.toString();
       sheet.classList.add('open');
       sheetBackdrop.style.display = 'block';
       sheet.setAttribute('aria-hidden','false');
@@ -684,11 +651,13 @@
     });
 
     // basic XSS guard
-    function escapeHtml(s){ return s.replace(/[&<>"'`=\/]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;","/":"&#x2F;","`":"&#x60;","=":"&#x3D;"}[c])); }
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"'`=\/]/g, c => ({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;','/':'&#x2F;','`':'&#x60;','=':'&#x3D;'
+      }[c]));
+    }
 
     // ===== iOS YARDIMCILARI =====
-
-    // 1) iOS viewport yüksekliği fallback (–svh)
     function setSVH(){
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--svh', `${vh}px`);
@@ -697,8 +666,6 @@
     window.addEventListener('resize', setSVH);
     window.addEventListener('orientationchange', setSVH);
 
-    // 2) iOS standalone'da dış linklerin Safari'de açılmasını engelle
-    //    (uygulama içinde yönlendirme)
     function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
     function isStandalone(){ return window.navigator.standalone === true; }
     document.addEventListener('click', function(e){
@@ -714,39 +681,28 @@
       }
     }, { passive:true });
 
-    // 3) iOS için A2HS (Add to Home Screen) bilgilendirme bandı
     const A2HS_KEY = 'sb-ios-a2hs-dismissed';
     function showA2HSIfNeeded(){
       if(!isIOS()) return;
-      if(isStandalone()) return; // zaten ana ekrandan
+      if(isStandalone()) return;
       if(localStorage.getItem(A2HS_KEY) === '1') return;
       a2hs?.classList.add('show');
       a2hs?.setAttribute('aria-hidden','false');
     }
+    const a2hsClose = document.getElementById('a2hsClose');
     a2hsClose?.addEventListener('click', ()=>{
       localStorage.setItem(A2HS_KEY, '1');
       a2hs.classList.remove('show');
       a2hs.setAttribute('aria-hidden','true');
     });
 
-    // 4) iOS klavye açılıp kapanınca scroll/whitespace sıçramalarını azalt
-    //    (input focus olduğunda suni scroll düzeltmesi)
-    let lastScrollY = window.scrollY;
-    window.addEventListener('scroll', ()=>{ lastScrollY = window.scrollY; }, {passive:true});
-    document.addEventListener('focusin', (e)=>{
-      if(isIOS() && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')){
-        setTimeout(()=> window.scrollTo(0, lastScrollY), 0);
-      }
-    });
-
-    // init
     applyI18N();
     showA2HSIfNeeded();
 
-    // PWA: Service Worker (göreli yol)
+    // PWA: Service Worker (GH Pages alt klasör için scope fix)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(console.error);
+        navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(console.error);
       });
     }
   </script>
