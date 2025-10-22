@@ -1,713 +1,345 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Smart Basket • Market</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Sepet & Bütçe Mini App</title>
 
-    <link rel="manifest" href="./manifest.json?v=4" />
-  <meta name="theme-color" content="#0a1110" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Smart Basket" />
-  <meta name="format-detection" content="telephone=no" />
-  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0f1115" />
+  <!-- iOS PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
-    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png" />
+  <!-- Favicons (opsiyonel) -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png" />
 
-  <style>
-    :root{
-      --bg:#0a1110; --bg2:#0b1413; --card:#0f1817;
-      --muted:#8aa39b; --text:#eaf5f1;
-      --primary:#16a34a; --primary-2:#22c55e; --accent:#f59e0b; --danger:#ef4444;
-      --border:#17312c; --ring:#16a34a55;
-      --safe-top: env(safe-area-inset-top, 0px);
-      --safe-bottom: env(safe-area-inset-bottom, 0px);
-      --svh: 1vh;
-    }
-    *{box-sizing:border-box; -webkit-tap-highlight-color: transparent}
-    html{height:100%; background:var(--bg); color-scheme: dark; overscroll-behavior-y: none;}
-    body{
-      min-height:calc(max(100dvh, 100 * var(--svh)));
-      margin:0; font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu; color:var(--text);
-      background:
-        radial-gradient(1200px 600px at 80% -10%, #0a2f2150 0%, transparent 60%),
-        radial-gradient(900px 520px at -10% 20%, #134e3240 0%, transparent 55%),
-        linear-gradient(180deg, var(--bg2) 0%, var(--bg) 40%);
-      background-attachment: fixed;
-      display:flex; flex-direction:column; gap:16px; overflow-x:hidden;
-      -webkit-user-select:none; user-select:none;
-    }
-    input, input::selection, textarea, textarea::selection { -webkit-user-select:text; user-select:text; }
-    ::selection{background:#16a34a55}
+  <style>
+    /* ==== Global Reset & Mobile Polish ==== */
+    :root{
+      --bg:#0f1115; --bg2:#0d1017; --card:#171923; --muted:#8a93a8; --text:#e5e7ef;
+      --accent:#5b9cff; --accent-2:#22c55e; --danger:#ef4444; --border:#24283a;
+      --ring:#3a66ff55;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    *{box-sizing:border-box; -webkit-tap-highlight-color: transparent}
+    html{
+      height:100%;
+      background:var(--bg);
+      color-scheme: dark; /* iOS klavye/scrollbar koyu */
+      overscroll-behavior-y: none; /* iOS bounce etkisini azalt */
+    }
+    body{
+      min-height:100dvh;
+      margin:0;
+      font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 80% -10%, #15305866 0%, transparent 60%),
+        radial-gradient(800px 500px at -10% 20%, #1a3a2f55 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg2) 0%, var(--bg) 40%);
+      background-attachment: fixed;
+      display:flex; flex-direction:column; gap:16px;
+      overflow-x:hidden;
+    }
+    ::selection{background:#5b9cff55}
 
-    header{
-      position:sticky; top:0; z-index:10; backdrop-filter:saturate(120%) blur(8px);
-      background:color-mix(in oklab, #081210 86%, transparent);
-      border-bottom:1px solid var(--border);
-      padding-top:calc(8px + var(--safe-top));
-    }
-    .wrap{max-width:920px; margin:0 auto; padding:18px 20px}
-    .title{display:flex; align-items:center; gap:12px; margin:0 0 4px}
-    .title svg{width:28px; height:28px; color:var(--primary); filter:drop-shadow(0 2px 10px #16a34a55)}
-    .muted{color:var(--muted); font-size:14px}
+    /* ==== Layout ==== */
+    header{
+      position:sticky; top:0; z-index:3;
+      backdrop-filter:saturate(120%) blur(8px);
+      background:color-mix(in oklab, #0a0e18 70%, transparent);
+      border-bottom:1px solid var(--border);
+      padding-top:calc(8px + var(--safe-top));
+    }
+    .wrap{max-width:880px; margin:0 auto; padding:18px 20px}
+    .title{display:flex; align-items:center; gap:12px; margin:0 0 10px}
+    .title svg{width:26px; height:26px; filter:drop-shadow(0 2px 8px #5b9cff44)}
+    .muted{color:var(--muted); font-size:14px}
 
-    .lang-switch{ margin-left:auto; display:flex; align-items:center; gap:8px; }
-    .flag{
-      width:30px; height:22px; border-radius:6px; border:1px solid #1b3c33;
-      background:#0c1513; cursor:pointer; display:grid; place-items:center;
-      transition:transform .06s ease, border-color .18s ease, background .18s ease, filter .18s ease;
-      touch-action: manipulation;
-    }
-    .flag:active{transform:scale(.96)}
-    .flag.active{border-color:#22c55e; box-shadow:0 0 0 4px #16a34a33}
-    .flag svg{width:22px; height:16px}
+    .card{
+      background:color-mix(in oklab, var(--card) 85%, #0a0d14);
+      border:1px solid var(--border);
+      border-radius:16px; padding:14px;
+      box-shadow:0 10px 30px #00000040, inset 0 1px 0 #ffffff08;
+      animation:card-in .45s cubic-bezier(.2,.7,.2,1);
+    }
+    @keyframes card-in{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
 
-    .card{
-      background:color-mix(in oklab, var(--card) 90%, #071412);
-      border:1px solid var(--border); border-radius:18px; padding:14px;
-      box-shadow:0 10px 30px #00000040, inset 0 1px 0 #ffffff08;
-      animation:card-in .45s cubic-bezier(.2,.7,.2,1);
-    }
-    @keyframes card-in{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:translateY(0)}}
+    /* ==== Inputs ==== */
+    .input-row{
+      display:grid; grid-template-columns:1.2fr .6fr auto; gap:10px; align-items:end;
+    }
+    label{font-size:12px; color:var(--muted); display:block; margin:0 0 6px}
+    input[type="text"], input[type="number"]{
+      width:100%; padding:12px 14px; border-radius:12px; border:1px solid var(--border);
+      background:#0c1018; color:var(--text); outline:none;
+      transition:border-color .18s ease, box-shadow .18s ease, transform .06s ease;
+    }
+    input:focus{
+      border-color:#2f3f7a; box-shadow:0 0 0 6px var(--ring);
+      transform:translateY(-1px);
+    }
+    input::placeholder{color:#7c86a3}
 
-    .input-row{ display:grid; grid-template-columns:1.3fr .7fr auto; gap:10px; align-items:end; }
-    label{font-size:12px; color:var(--muted); display:block; margin:0 0 6px}
-    input[type="text"], input[type="number"]{
-      width:100%; padding:12px 14px; border-radius:14px; border:1px solid var(--border);
-      background:#0c1513; color:var(--text); outline:none;
-      transition:border-color .18s ease, box-shadow .18s ease, transform .06s ease;
-      -webkit-appearance:none; appearance:none; touch-action: manipulation;
-    }
-    input:focus{ border-color:#1d5d45; box-shadow:0 0 0 6px var(--ring); transform:translateY(-1px); }
-    input::placeholder{color:#7fa399}
+    /* ==== Buttons ==== */
+    .icon{
+      display:inline-flex; align-items:center; gap:8px; padding:12px 14px;
+      border-radius:12px; border:1px solid #2a2f45; background:linear-gradient(180deg,#111626,#0e1320);
+      color:#dfe3f5; cursor:pointer; transition:transform .08s ease, filter .18s ease, border-color .18s ease;
+      font-weight:700; position:relative; overflow:hidden;
+    }
+    .icon svg{width:18px; height:18px}
+    .icon:active{transform:scale(.98)}
+    .icon:hover{border-color:#3a4163; filter:brightness(1.06)}
+    .icon::after{ /* ripple */
+      content:""; position:absolute; inset:auto auto 0 0; width:0; height:0; border-radius:50%;
+      background:#5b9cff33; transform:translate(-50%,50%); pointer-events:none;
+    }
+    .icon:active::after{ width:220%; height:220%; transition:width .28s ease, height .28s ease; }
 
-    /* ---- Basma + Ripple ---- */
-    .pressable{ position:relative; overflow:hidden; }
-    .pressable:active{ transform:scale(.98); }
-    .ripple-ink{
-      position:absolute; border-radius:50%; pointer-events:none;
-      background:rgba(22,163,74,.25); transform:scale(0); opacity:1;
-      animation:ripple .6s ease-out forwards; will-change:transform, opacity;
-    }
-    @keyframes ripple{ to{ transform:scale(1); opacity:0; } }
+    /* ==== Items ==== */
+    .items{display:flex; flex-direction:column; gap:10px; margin-top:12px}
+    .item{
+      display:grid; grid-template-columns:auto 1fr auto auto; gap:10px; align-items:center;
+      padding:10px 12px; border:1px dashed #2a3147; border-radius:12px; background:#0e121a;
+      animation:item-in .35s cubic-bezier(.21,.7,.18,1);
+    }
+    @keyframes item-in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
 
-    .btn{
-      display:inline-flex; align-items:center; gap:8px; padding:12px 14px;
-      border-radius:14px; border:1px solid #173e31;
-      background:linear-gradient(180deg,#0f1f1a,#0c1915);
-      color:#e9fff6; cursor:pointer; font-weight:800; letter-spacing:.2px;
-      transition:transform .08s ease, filter .18s ease, border-color .18s ease, background .18s ease;
-      will-change:transform; touch-action: manipulation;
-    }
-    .btn svg{width:18px; height:18px}
-    .btn:hover{border-color:#256c50; filter:brightness(1.06)}
-    .btn:active{transform:scale(.98)}
-    .btn.primary{ background:linear-gradient(180deg,#0f281f,#0b2019); border-color:#1b5f46; box-shadow:inset 0 1px 0 #ffffff10, 0 8px 18px #0b3b2a55; }
-    .btn.warn{ background:linear-gradient(180deg,#2b1f0a,#241a08); border-color:#7a5113; }
+    .item.done{opacity:.6; text-decoration:line-through}
+    .pill{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid #2a3147; color:#b7c0d9}
+    .money{font-variant-numeric:tabular-nums; font-weight:700}
+    .ghost{
+      background:transparent; border:1px solid #2a3147; color:#cbd5f1; border-radius:10px;
+      padding:8px 10px; cursor:pointer; transition:transform .08s ease, border-color .18s ease;
+    }
+    .ghost:active{transform:scale(.97)}
+    .ghost:hover{border-color:#3a4163}
 
-    .items{display:flex; flex-direction:column; gap:10px; margin-top:12px}
-    .item{
-      display:grid; grid-template-columns:auto 1fr auto auto auto; gap:10px; align-items:center;
-      padding:12px 12px; border:1px solid #1b3c33; border-radius:14px;
-      background:linear-gradient(180deg,#0c1614,#0a1412); animation:item-in .28s cubic-bezier(.21,.7,.18,1);
-    }
-    @keyframes item-in{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)}}
-    .item.done{opacity:.6; text-decoration:line-through}
-    .pill{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid #1b3c33; color:#cbe5da; background:#0c1714}
-    .money{font-variant-numeric:tabular-nums; font-weight:800}
+    /* ==== Footer totals (safe-area aware) ==== */
+    footer.totals{
+      position:sticky; bottom:0; z-index:3;
+      background:color-mix(in oklab, #0a0e18 88%, transparent);
+      border-top:1px solid var(--border); backdrop-filter:saturate(120%) blur(8px);
+      padding-bottom:calc(8px + var(--safe-bottom));
+    }
+    .totals-row{display:flex; align-items:center; justify-content:space-between; gap:16px}
+    .badge{
+      display:inline-flex; align-items:center; gap:6px; background:#101624; border:1px solid #233053;
+      padding:8px 10px; border-radius:12px; font-weight:600
+    }
+    .badge svg{width:16px; height:16px}
+    .total{
+      display:flex; align-items:center; gap:12px; font-weight:800; font-size:18px;
+      background:linear-gradient(180deg,#0f1524,#0c1220); border:1px solid #243055; padding:10px 14px; border-radius:12px;
+      box-shadow:inset 0 1px 0 #ffffff08, 0 6px 20px #00000040;
+    }
 
-    .ghost{
-      background:transparent; border:1px solid #1b3c33; color:#d2efe3; border-radius:10px;
-      padding:8px 10px; cursor:pointer; transition:transform .08s ease, border-color .18s ease, background .18s ease;
-      touch-action: manipulation;
-    }
-    .ghost:hover{border-color:#2a6a54; background:#0e1d19}
-    .ghost:active{transform:scale(.97)}
+    /* ==== Toast ==== */
+    .toast{
+      position:fixed; right:20px; bottom:calc(88px + var(--safe-bottom)); z-index:9999; display:none;
+      background:#0c1a12; border:1px solid #1c3d2a; color:#dbffe6;
+      padding:12px 14px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.35)
+    }
+    .toast.show{display:block; animation:slideup .35s ease}
+    @keyframes slideup{from{transform:translateY(12px); opacity:.4} to{transform:translateY(0); opacity:1}}
 
-    footer.totals{
-      position:sticky; bottom:0; z-index:8;
-      background:color-mix(in oklab, #071512 88%, transparent);
-      border-top:1px solid var(--border); backdrop-filter:saturate(120%) blur(8px);
-      padding-bottom:calc(8px + var(--safe-bottom));
-    }
-    .totals-row{display:flex; align-items:center; justify-content:space-between; gap:16px}
-    .badge{ display:inline-flex; align-items:center; gap:6px; background:#0d1c17; border:1px solid #174b39;
-      padding:8px 10px; border-radius:12px; font-weight:700}
-    .badge svg{width:16px; height:16px}
-    .total{
-      display:flex; align-items:center; gap:12px; font-weight:900; font-size:18px;
-      background:linear-gradient(180deg,#0f221c,#0b1915); border:1px solid #1a5a45; padding:10px 14px; border-radius:12px;
-      box-shadow:inset 0 1px 0 #ffffff08, 0 6px 20px #03171280;
-    }
-
-    .toast{
-      position:fixed; right:20px; bottom:calc(88px + var(--safe-bottom)); z-index:9999; display:none;
-      background:#0b1f17; border:1px solid #1b3f32; color:#dfffee;
-      padding:12px 14px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.35)
-    }
-    .toast.show{display:block; animation:slideup .35s ease}
-    @keyframes slideup{from{transform:translateY(12px); opacity:.4} to{transform:translateY(0); opacity:1}}
-
-    .sheet-backdrop{ position:fixed; inset:0; background:#00000088; display:none; z-index:50; }
-    .sheet{
-      position:fixed; left:0; right:0; bottom:0; z-index:60;
-      background:linear-gradient(180deg,#0e1916,#0a1311);
-      border-top:1px solid #1a4a3a; box-shadow:0 -20px 40px #00000080;
-      border-top-left-radius:18px; border-top-right-radius:18px;
-      transform:translateY(110%); transition:transform .35s cubic-bezier(.2,.7,.2,1);
-      will-change:transform;
-    }
-    .sheet.open{transform:translateY(0)}
-    .sheet .head{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 18px; border-bottom:1px solid #123a2d;}
-    .drag{width:48px; height:4px; border-radius:999px; background:#285a47; margin:6px auto 10px}
-    .sheet .body{padding:8px 18px 18px}
-    .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
-    .sheet input{border-radius:12px; background:#0b1513; border:1px solid #184235}
-    .sheet .actions{display:flex; gap:10px; margin-top:12px; justify-content:flex-end}
-
-    .a2hs{
-      position:fixed; left:12px; right:12px; bottom:calc(100px + var(--safe-bottom));
-      background:#0e1916; color:#eaf5f1; border:1px solid #1b3f32; border-radius:14px;
-      box-shadow:0 14px 32px rgba(0,0,0,.4); z-index:70; padding:10px 12px; display:none;
-      animation:slideup .35s ease;
-    }
-    .a2hs strong{font-weight:800}
-    .a2hs .row{display:flex; align-items:center; justify-content:space-between; gap:12px}
-    .a2hs .hint{font-size:13px; color:#cfe9de}
-    .a2hs .close{background:transparent; border:1px solid #1b3c33; color:#cfe9de; border-radius:10px; padding:6px 8px; cursor:pointer}
-    .a2hs.show{display:block}
-
-    @media (max-width:640px){
-      .wrap{padding:16px 14px}
-      .input-row{grid-template-columns:1fr 1fr auto}
-      .item{grid-template-columns:auto 1fr auto auto auto}
-      .pill{display:none}
-      .row{grid-template-columns:1fr}
-    }
-  </style>
+    /* ==== Mobile tweaks ==== */
+    @media (max-width:640px){
+      .wrap{padding:16px 14px}
+      .input-row{grid-template-columns:1fr 1fr auto}
+      .item{grid-template-columns:auto 1fr auto}
+      .item .pill{display:none}
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <div class="wrap" style="display:flex; align-items:flex-start; gap:12px">
-      <h1 class="title" style="margin-right:auto">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="18" cy="21" r="1" fill="currentColor"/>
-        </svg>
-        <span id="appTitle">Smart Basket</span>
-        <span class="muted" id="tagline">• hızlı ekle, işaretle, toplamı gör</span>
-      </h1>
-
-      <div class="lang-switch" aria-label="Language">
-        <button id="langTR" class="flag pressable" title="Türkçe" aria-label="Türkçe">
-          <svg viewBox="0 0 640 480" aria-hidden="true">
-            <path fill="#e30a17" d="M0 0h640v480H0z"/><circle fill="#fff" cx="258.4" cy="240" r="76.8"/>
-            <circle fill="#e30a17" cx="278.4" cy="240" r="64"/>
-            <path fill="#fff" d="M335.7 240l51.8 16.8-32-44.2v54.8l32-44.2z"/>
-          </svg>
-        </button>
-        <button id="langEN" class="flag pressable" title="English" aria-label="English">
-          <svg viewBox="0 0 60 40" aria-hidden="true">
-            <defs><clipPath id="c"><path d="M0,0H60V40H0z"/></clipPath></defs>
-            <g clip-path="url(#c)">
-              <path fill="#b22234" d="M0 0h60v40H0z"/>
-              <path stroke="#fff" stroke-width="6.666" d="M0 6.666h60M0 20h60M0 33.333h60"/>
-              <rect width="24" height="16" fill="#3c3b6e"/>
-              <g fill="#fff" transform="scale(.8) translate(2,2)">
-                <circle r="1.1" cx="3" cy="3"/><circle r="1.1" cx="7" cy="3"/><circle r="1.1" cx="11" cy="3"/>
-                <circle r="1.1" cx="5" cy="5"/><circle r="1.1" cx="9" cy="5"/>
-                <circle r="1.1" cx="3" cy="7"/><circle r="1.1" cx="7" cy="7"/><circle r="1.1" cx="11" cy="7"/>
-                <circle r="1.1" cx="5" cy="9"/><circle r="1.1" cx="9" cy="9"/>
-                <circle r="1.1" cx="3" cy="11"/><circle r="1.1" cx="7" cy="11"/><circle r="1.1" cx="11" cy="11"/>
-              </g>
-            </g>
-          </svg>
-        </button>
-      </div>
-    </div>
-
-    <div class="wrap">
-      <div class="card">
-        <div class="input-row">
-          <div>
-            <label for="name" id="labelName">Ürün adı</label>
-            <input id="name" type="text" placeholder="Örn: Süt 1L" autocomplete="off" />
-          </div>
-          <div>
-            <label for="price" id="labelPrice">Fiyat (₺)</label>
-            <input id="price" type="text" inputmode="decimal" placeholder="e.g., 12.99" />
-          </div>
-          <div>
-            <label style="visibility:hidden">.</label>
-            <button id="addBtn" class="btn primary pressable" title="Sepete ekle">
-              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M10 12l3 3 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-              <span id="btnAddText">Sepete Ekle</span>
-            </button>
-          </div>
-        </div>
-
-                <div id="empty-placeholder" style="display: none; text-align: center; padding: 24px 16px; border: 2px dashed var(--border); border-radius: 14px; margin-top: 16px; color: var(--muted);">
+  <header>
+    <div class="wrap">
+      <h1 class="title">
+        <!-- cart icon -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="9" cy="21" r="1" fill="currentColor"/><circle cx="18" cy="21" r="1" fill="currentColor"/>
+        </svg>
+        Smart Basket <span class="muted">• hızlı not al, sepete ekle, toplamı gör</span>
+      </h1>
+      <div class="card">
+        <div class="input-row">
+          <div>
+            <label for="name">Ürün adı</label>
+            <input id="name" type="text" placeholder="Örn: Süt 1L" autocomplete="off" />
           </div>
+          <div>
+            <label for="price">Fiyat (₺)</label>
+            <input id="price" type="text" inputmode="decimal" placeholder="Örn: 39,90" />
+          </div>
+          <div>
+            <label style="visibility:hidden">.</label>
+            <button id="addBtn" class="icon" title="Sepete ekle">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M10 12l3 3 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Sepete Ekle
+            </button>
+          </div>
+        </div>
+        <div class="items" id="items"></div>
+      </div>
+    </div>
+  </header>
 
-        <div class="items" id="items"></div>
-      </div>
-    </div>
-  </header>
+  <main class="wrap" id="emptyState" style="display:none;">
+    <div class="card" style="text-align:center; padding:30px">
+      Henüz ürün yok. Ürün adını ve fiyatını yazıp <strong>Sepete Ekle</strong>’ye bas.
+    </div>
+  </main>
 
-  <footer class="totals">
-    <div class="wrap totals-row">
-      <div class="badge">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M8 6h13l-2 8H9L7 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span id="count">0 ürün</span>
-      </div>
-      <div class="total">
-        <span id="totalLabel">Toplam:</span>
-        <span class="money" id="total">₺0,00</span>
-        <button class="btn warn pressable" id="clearAll" title="Hepsini temizle"><span id="btnClearText">Temizle</span></button>
-      </div>
-    </div>
-  </footer>
+  <footer class="totals">
+    <div class="wrap totals-row">
+      <div class="badge">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M8 6h13l-2 8H9L7 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="count">0 ürün</span>
+      </div>
+      <div class="total">
+        Toplam:
+        <span class="money" id="total">₺0,00</span>
+        <button class="ghost" id="clearAll" title="Hepsini temizle">Temizle</button>
+      </div>
+    </div>
+  </footer>
 
-  <div id="toast" class="toast" role="status" aria-live="polite">Sepete eklendi</div>
+  <div id="toast" class="toast" role="status" aria-live="polite">Sepete atıldı</div>
 
-    <div id="sheetBackdrop" class="sheet-backdrop"></div>
-  <section id="editSheet" class="sheet" aria-hidden="true">
-    <div class="drag"></div>
-    <div class="head">
-      <strong id="editTitle">Ürünü Düzenle</strong>
-      <button id="closeSheet" class="ghost pressable" title="Kapat"><span id="btnCloseText">Kapat ✕</span></button>
-    </div>
-    <div class="body">
-      <div class="row">
-        <div>
-          <label for="editName" id="editLabelName">Ürün adı</label>
-          <input id="editName" type="text" placeholder="Örn: Süt 1L" />
-        </div>
-        <div>
-          <label for="editPrice" id="editLabelPrice">Fiyat (₺)</label>
-          <input id="editPrice" type="text" inputmode="decimal" placeholder="e.g., 12.99" />
-        </div>
-      </div>
-      <div class="actions">
-        <button id="deleteItem" class="btn pressable" style="border-color:#5a1b1b;background:linear-gradient(180deg,#2a0e0e,#220b0b)"><span id="btnDeleteText">Sil</span></button>
-        <button id="saveItem" class="btn primary pressable"><span id="btnSaveText">Kaydet</span></button>
-      </div>
-    </div>
-  </section>
+  <script>
+    // --- TL format & parse ---
+    const fmt = new Intl.NumberFormat('tr-TR', { style:'currency', currency:'TRY', minimumFractionDigits:2 });
+    function parsePrice(v){
+      if(typeof v !== 'string') return NaN;
+      v = v.replace(/\s+/g,'').replace(/[₺]/g,'').replace(/\./g,'').replace(',', '.');
+      const n = parseFloat(v);
+      return Number.isFinite(n) ? n : NaN;
+    }
 
-    <div id="a2hs" class="a2hs" role="dialog" aria-live="polite" aria-hidden="true">
-    <div class="row">
-      <div class="hint">
-        <strong>Uygulama gibi kullan:</strong>
-        Paylaş → <em>Ana Ekrana Ekle</em>
-      </div>
-      <button id="a2hsClose" class="close pressable">Kapat</button>
-    </div>
-  </div>
+    // --- state ---
+    const storeKey = 'smart-basket-v1';
+    let items = JSON.parse(localStorage.getItem(storeKey) || '[]');
 
-  <script>
-    // ===== Para Birimi / Dil haritası =====
-    const CURRENCIES = {
-      USD: { code:'USD', symbol:'$', locales:['en-US'] },
-      TRY: { code:'TRY', symbol:'₺', locales:['tr-TR'] }
-    };
+    // --- els ---
+    const nameEl = document.getElementById('name');
+    const priceEl = document.getElementById('price');
+    const addBtn = document.getElementById('addBtn');
+    const itemsEl = document.getElementById('items');
+    const countEl = document.getElementById('count');
+    const totalEl = document.getElementById('total');
+    const toastEl = document.getElementById('toast');
+    const emptyState = document.getElementById('emptyState');
+    const clearAllBtn = document.getElementById('clearAll');
 
-    // Tercihler
-    let lang = localStorage.getItem('sb-lang');
-    let currencyCode = localStorage.getItem('sb-currency');
+    // --- render ---
+    function render(){
+      itemsEl.innerHTML = '';
+      emptyState.style.display = items.length === 0 ? 'block' : 'none';
 
-    // Bölgeye göre ilk kurulum
-    if(!lang || !currencyCode){
-      const navLang = (navigator.language || 'en-US').toLowerCase();
-      const region = navLang.split('-')[1] || '';
-      if(region.toUpperCase() === 'TR'){
-        lang = 'tr'; currencyCode = 'TRY';
-      }else if(region.toUpperCase() === 'US'){
-        lang = 'en'; currencyCode = 'USD';
-      }else{
-        lang = lang || 'en'; currencyCode = currencyCode || 'USD';
-      }
-      localStorage.setItem('sb-lang', lang);
-      localStorage.setItem('sb-currency', currencyCode);
-    }
+      let sum = 0;
+      items.forEach((it, idx) => {
+        sum += it.price;
 
-    document.documentElement.lang = lang;
+        const row = document.createElement('div');
+        row.className = 'item' + (it.done ? ' done' : '');
+        row.innerHTML = `
+          <button class="ghost" aria-label="Satın alındı olarak işaretle" data-act="toggle" data-idx="${idx}" title="Tik">✓</button>
+          <div>
+            <div style="font-weight:700">${escapeHtml(it.name)}</div>
+            <div class="muted" style="font-size:12px">${new Date(it.ts).toLocaleString('tr-TR')}</div>
+          </div>
+          <span class="pill money">${fmt.format(it.price)}</span>
+          <button class="ghost" aria-label="Sil" data-act="del" data-idx="${idx}" title="Sil">🗑️</button>
+        `;
+        row.style.willChange = 'transform, opacity';
+        itemsEl.appendChild(row);
+      });
 
-    // I18N
-    const I18N = {
-      tr: {
-        appTitle: "Smart Basket",
-        tagline: "• hızlı ekle, işaretle, toplamı gör",
-        labelName: "Ürün adı",
-        labelPrice: () => `Fiyat (${CURRENCIES[currencyCode].symbol})`,
-        phName: "Örn: Süt 1L",
-        phPrice: () => CURRENCIES[currencyCode].code === 'TRY' ? "Örn: 39,90" : "e.g., 12.99",
-        add: "Sepete Ekle",
-        emptyInline: "Henüz ürün yok. Ürün adını ve fiyatını yazıp<br><strong>Sepete Ekle</strong>'ye bas.",
-        count: n => `${n} ürün`,
-        totalLabel: "Toplam:",
-        clear: "Temizle",
-        clearConfirm: "Tüm ürünler silinsin mi?",
-        toastAdded: "Sepete eklendi",
-        toastUpdated: "Güncellendi",
-        toastDeleted: "Silindi",
-        toggleAria: "Satın alındı olarak işaretle",
-        edit: "Düzenle",
-        delete: "Sil",
-        editTitle: "Ürünü Düzenle",
-        save: "Kaydet",
-        close: "Kapat ✕",
-        dateLocale: "tr-TR",
-        a2hsHint: "Uygulama gibi kullan: Paylaş → Ana Ekrana Ekle",
-        a2hsClose: "Kapat"
-      },
-      en: {
-        appTitle: "Smart Basket",
-        tagline: "• add fast, check off, see totals",
-        labelName: "Item name",
-        labelPrice: () => `Price (${CURRENCIES[currencyCode].symbol})`,
-        phName: "e.g., Milk 1L",
-        phPrice: () => CURRENCIES[currencyCode].code === 'TRY' ? "Örn: 39,90" : "e.g., 12.99",
-        add: "Add to Basket",
-        emptyInline: "No items yet. Enter an item name and price,<br>then press <strong>Add to Basket</strong>.",
-        count: n => `${n} item${n===1?"":"s"}`,
-        totalLabel: "Total:",
-        clear: "Clear",
-        clearConfirm: "Delete all items?",
-        toastAdded: "Added to basket",
-        toastUpdated: "Updated",
-        toastDeleted: "Deleted",
-        toggleAria: "Mark as purchased",
-        edit: "Edit",
-        delete: "Delete",
-        editTitle: "Edit Item",
-        save: "Save",
-        close: "Close ✕",
-        dateLocale: "en-US",
-        a2hsHint: "Use like an app: Share → Add to Home Screen",
-        a2hsClose: "Close"
-      }
-    };
+      countEl.textContent = `${items.length} ürün`;
+      totalEl.textContent = fmt.format(sum);
+      localStorage.setItem(storeKey, JSON.stringify(items));
+    }
 
-    // Formatter
-    let fmt = new Intl.NumberFormat(I18N[lang].dateLocale, {
-      style:'currency', currency: CURRENCIES[currencyCode].code, minimumFractionDigits:2
-    });
+    // --- toast ---
+    let toastTimer = null;
+    function toast(msg){
+      toastEl.textContent = msg || 'Sepete atıldı';
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1400);
+    }
 
-    // price parse
-    function parsePrice(v){
-      if(typeof v !== 'string') return NaN;
-      v = v.replace(/\s+/g,'').replace(/[₺$]/g,'').replace(',', '.');
-      const n = parseFloat(v);
-      return Number.isFinite(n) ? n : NaN;
-    }
+    // --- handlers ---
+    function addItem(){
+      const name = (nameEl.value || '').trim();
+      const price = parsePrice((priceEl.value || '').trim());
+      if(!name){ nameEl.focus(); pulse(nameEl); return; }
+      if(!Number.isFinite(price) || price < 0){ priceEl.focus(); pulse(priceEl); return; }
 
-    // state
-    const storeKey = 'smart-basket-v1';
-    let items = JSON.parse(localStorage.getItem(storeKey) || '[]');
-    let editingIndex = null;
+      const item = { name, price, done:false, ts: Date.now() };
+      items.unshift(item); // yeni en üstte
+      nameEl.value = ''; priceEl.value = '';
+      nameEl.focus();
+      render();
+      toast('Sepete atıldı');
+    }
 
-    // els
-    const appTitleEl = document.getElementById('appTitle');
-    const taglineEl = document.getElementById('tagline');
-    const nameEl = document.getElementById('name');
-    const priceEl = document.getElementById('price');
-    const addBtn = document.getElementById('addBtn');
-    const addBtnText = document.getElementById('btnAddText');
-    const itemsEl = document.getElementById('items');
-    const emptyPlaceholder = document.getElementById('empty-placeholder');
-    const countEl = document.getElementById('count');
-    const totalEl = document.getElementById('total');
-    const totalLabelEl = document.getElementById('totalLabel');
-    const toastEl = document.getElementById('toast');
-    const clearAllBtn = document.getElementById('clearAll');
-    const btnClearText = document.getElementById('btnClearText'); // DÜZELTME 1
+    // ufak input pulse
+    function pulse(el){
+      el.style.boxShadow = '0 0 0 6px #ef444455';
+      setTimeout(()=> el.style.boxShadow = '', 250);
+    }
 
-    const labelNameEl = document.getElementById('labelName');
-    const labelPriceEl = document.getElementById('labelPrice');
+    itemsEl.addEventListener('click', (e)=>{
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      const idx = +btn.dataset.idx;
+      const act = btn.dataset.act;
+      if(Number.isNaN(idx)) return;
 
-    const sheet = document.getElementById('editSheet');
-    const sheetBackdrop = document.getElementById('sheetBackdrop');
-    const closeSheetBtn = document.getElementById('closeSheet');
-    const editNameEl = document.getElementById('editName');
-    const editPriceEl = document.getElementById('editPrice');
-    const saveItemBtn = document.getElementById('saveItem');
-    const deleteItemBtn = document.getElementById('deleteItem');
+      if(act === 'del'){
+        items.splice(idx,1);
+        render();
+      }else if(act === 'toggle'){
+        items[idx].done = !items[idx].done;
+        render();
+      }
+    });
 
-    const editTitleEl = document.getElementById('editTitle');
-    const editLabelNameEl = document.getElementById('editLabelName');
-    const editLabelPriceEl = document.getElementById('editLabelPrice');
-    const btnSaveText = document.getElementById('btnSaveText');
-    const btnDeleteText = document.getElementById('btnDeleteText');
-    const btnCloseText = document.getElementById('btnCloseText');
+    addBtn.addEventListener('click', addItem);
+    nameEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') priceEl.focus(); });
+    priceEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') addItem(); });
 
-    const langTR = document.getElementById('langTR');
-    const langEN = document.getElementById('langEN');
+    clearAllBtn.addEventListener('click', ()=>{
+      if(items.length===0) return;
+      if(confirm('Tüm ürünler silinsin mi?')){ items = []; render(); }
+    });
 
-    const a2hs = document.getElementById('a2hs');
-    const a2hsClose = document.getElementById('a2hsClose');
+    // basic XSS guard
+    function escapeHtml(s){ return s.replace(/[&<>"'`=\/]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;","/":"&#x2F;","`":"&#x60;","=":"&#x3D;"}[c])); }
 
-    function applyI18N(){
-      const t = I18N[lang];
-      document.documentElement.lang = lang;
-      appTitleEl.textContent = t.appTitle;
-      taglineEl.textContent = t.tagline;
+    // init
+    render();
 
-      labelNameEl.textContent = t.labelName;
-      labelPriceEl.textContent = t.labelPrice();
-      nameEl.placeholder = t.phName;
-      priceEl.placeholder = t.phPrice();
-
-      addBtn.setAttribute('title', t.add);
-      addBtnText.textContent = t.add;
-
-      emptyPlaceholder.innerHTML = t.emptyInline;
-
-      totalLabelEl.textContent = t.totalLabel;
-      btnClearText.textContent = t.clear; // DÜZELTME 2
-      clearAllBtn.title = t.clear;
-
-      editTitleEl.textContent = t.editTitle;
-      editLabelNameEl.textContent = t.labelName;
-      editLabelPriceEl.textContent = t.labelPrice();
-      btnSaveText.textContent = t.save;
-      btnDeleteText.textContent = t.delete;
-      btnCloseText.textContent = t.close;
-
-      fmt = new Intl.NumberFormat(t.dateLocale, { style:'currency', currency: CURRENCIES[currencyCode].code, minimumFractionDigits:2 });
-
-      langTR.classList.toggle('active', lang === 'tr');
-      langEN.classList.toggle('active', lang === 'en');
-
-      if (a2hs) {
-        const [lead, rest] = t.a2hsHint.split(':');
-        a2hs.querySelector('.hint').innerHTML = `<strong>${lead}:</strong> ${rest || ''}`;
-        a2hsClose.textContent = t.a2hsClose;
-      }
-      render();
-    }
-
-    function setLang(newLang){
-      if(!I18N[newLang]) return;
-      lang = newLang;
-      currencyCode = (newLang === 'tr') ? 'TRY' : 'USD';
-      localStorage.setItem('sb-lang', lang);
-      localStorage.setItem('sb-currency', currencyCode);
-      applyI18N();
-      toast(I18N[lang].toastUpdated);
-    }
-
-    langTR.addEventListener('click', ()=> setLang('tr'));
-    langEN.addEventListener('click', ()=> setLang('en'));
-
-    function render(){
-      const t = I18N[lang];
-      itemsEl.innerHTML = '';
-      emptyPlaceholder.style.display = items.length === 0 ? 'block' : 'none';
-
-      let sum = 0;
-      items.forEach((it, idx) => {
-        sum += it.price;
-
-        const row = document.createElement('div');
-        row.className = 'item' + (it.done ? ' done' : '');
-        row.innerHTML = `
-          <button class="ghost pressable" aria-label="${t.toggleAria}" data-act="toggle" data-idx="${idx}" title="${t.toggleAria}">✓</button>
-          <div>
-            <div style="font-weight:800">${escapeHtml(it.name)}</div>
-            <div class="muted" style="font-size:12px">${new Date(it.ts).toLocaleString(t.dateLocale)}</div>
-          </div>
-          <span class="pill money">${fmt.format(it.price)}</span>
-          <button class="ghost pressable" aria-label="${t.edit}" data-act="edit" data-idx="${idx}" title="${t.edit}">✏️</button>
-          <button class="ghost pressable" aria-label="${t.delete}" data-act="del" data-idx="${idx}" title="${t.delete}">🗑️</button>
-        `;
-        itemsEl.appendChild(row);
-      });
-
-      countEl.textContent = I18N[lang].count(items.length);
-      totalEl.textContent = fmt.format(sum);
-      localStorage.setItem(storeKey, JSON.stringify(items));
-    }
-
-    // Toast
-    let toastTimer = null;
-    function toast(msg){
-      toastEl.textContent = msg || I18N[lang].toastAdded;
-      toastEl.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1400);
-    }
-
-    // Add
-    function addItem(){
-      const t = I18N[lang];
-      const name = (nameEl.value || '').trim();
-      const price = parsePrice((priceEl.value || '').trim());
-      if(!name){ nameEl.focus(); pulse(nameEl); return; }
-      if(!Number.isFinite(price) || price < 0){ priceEl.focus(); pulse(priceEl); return; }
-
-      const item = { name, price, done:false, ts: Date.now() };
-      items.unshift(item);
-      nameEl.value = ''; priceEl.value = '';
-      nameEl.focus();
-      render();
-      toast(t.toastAdded);
-    }
-
-    function pulse(el){
-      el.style.boxShadow = '0 0 0 6px var(--ring)';
-      setTimeout(()=> el.style.boxShadow = '', 220);
-    }
-
-    // List actions
-    itemsEl.addEventListener('click', (e)=>{
-      const btn = e.target.closest('button');
-      if(!btn) return;
-      const idx = +btn.dataset.idx;
-      const act = btn.dataset.act;
-      if(Number.isNaN(idx)) return;
-
-      const t = I18N[lang];
-
-      if(act === 'del'){
-        items.splice(idx,1);
-        render();
-        toast(t.toastDeleted);
-      }else if(act === 'toggle'){
-        items[idx].done = !items[idx].done;
-        render();
-      }else if(act === 'edit'){
-        openSheet(idx);
-      }
-    });
-
-    addBtn.addEventListener('click', addItem);
-    nameEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') priceEl.focus(); });
-    priceEl.addEventListener('keydown', (e)=>{ if(e.key==='Enter') addItem(); });
-
-    clearAllBtn.addEventListener('click', ()=>{
-      if(items.length===0) return;
-      if(confirm(I18N[lang].clearConfirm)){ items = []; render(); }
-    });
-
-    // sheet
-    function openSheet(idx){
-      editingIndex = idx;
-      const it = items[idx];
-      editNameEl.value = it.name;
-      editPriceEl.value = it.price.toString();
-      document.getElementById('editLabelPrice').textContent = I18N[lang].labelPrice();
-      sheet.classList.add('open');
-      sheetBackdrop.style.display = 'block';
-      sheet.setAttribute('aria-hidden','false');
-      setTimeout(()=> editNameEl.focus(), 50);
-    }
-    function closeSheet(){
-      editingIndex = null;
-      sheet.classList.remove('open');
-      sheetBackdrop.style.display = 'none';
-      sheet.setAttribute('aria-hidden','true');
-    }
-    sheetBackdrop.addEventListener('click', closeSheet);
-    closeSheetBtn.addEventListener('click', closeSheet);
-
-    saveItemBtn.addEventListener('click', ()=>{
-      if(editingIndex===null) return;
-      const t = I18N[lang];
-      const name = (editNameEl.value || '').trim();
-      const price = parsePrice((editPriceEl.value || '').trim());
-      if(!name){ editNameEl.focus(); pulse(editNameEl); return; }
-      if(!Number.isFinite(price) || price < 0){ editPriceEl.focus(); pulse(editPriceEl); return; }
-      items[editingIndex].name = name;
-      items[editingIndex].price = price;
-      render();
-      toast(t.toastUpdated);
-      closeSheet();
-    });
-
-    deleteItemBtn.addEventListener('click', ()=>{
-      if(editingIndex===null) return;
-      const t = I18N[lang];
-      items.splice(editingIndex,1);
-      render();
-      toast(t.toastDeleted);
-      closeSheet();
-    });
-
-    // XSS guard
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"'`=\/]/g, c => ({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;','/':'&#x2F;','`':'&#x60;','=':'&#x3D;'
-      }[c]));
-    }
-
-    // iOS helpers
-    function setSVH(){
-      const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--svh', `${vh}px`);
-    }
-    setSVH();
-    window.addEventListener('resize', setSVH);
-    window.addEventListener('orientationchange', setSVH);
-
-    function isIOS(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
-    function isStandalone(){ return window.navigator.standalone === true; }
-    document.addEventListener('click', function(e){
-      if(!isIOS() || !isStandalone()) return;
-      const a = e.target.closest('a[href]');
-      if(!a) return;
-      const href = a.getAttribute('href');
-      if(!href) return;
-      const isHttp = href.startsWith('http://') || href.startsWith('https://') || href.startsWith('/');
-      if(isHttp){ e.preventDefault(); window.location.href = href; }
-    }, { passive:true });
-
-    const A2HS_KEY = 'sb-ios-a2hs-dismissed';
-    function showA2HSIfNeeded(){
-      if(!isIOS()) return;
-      if(isStandalone()) return;
-      if(localStorage.getItem(A2HS_KEY) === '1') return;
-      a2hs?.classList.add('show');
-      a2hs?.setAttribute('aria-hidden','false');
-    }
-    a2hsClose?.addEventListener('click', ()=>{
-      localStorage.setItem(A2HS_KEY, '1');
-      a2hs.classList.remove('show');
-      a2hs.setAttribute('aria-hidden','true');
-    });
-
-    // Ripple
-    document.addEventListener('pointerdown', (e)=>{
-      const el = e.target.closest('.pressable');
-      if(!el) return;
-      const rect = el.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height) * 2;
-      const ink = document.createElement('span');
-      ink.className = 'ripple-ink';
-      ink.style.width = ink.style.height = size + 'px';
-      ink.style.left = (e.clientX - rect.left - size/2) + 'px';
-      ink.style.top  = (e.clientY - rect.top  - size/2) + 'px';
-      el.appendChild(ink);
-      setTimeout(()=>ink.remove(), 650);
-    }, {passive:true});
-
-    // init
-    applyI18N();
-    showA2HSIfNeeded();
-
-    // SW
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(console.error);
-      });
-    }
-  </script>
+    // PWA: Service Worker kaydı (GitHub Pages için göreli yol)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(console.error);
+      });
+    }
+  </script>
 </body>
 </html>
