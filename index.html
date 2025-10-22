@@ -106,23 +106,30 @@
     }
     input::placeholder{color:#7fa399}
 
+    /* ---- Basma + Ripple ---- */
+    .pressable{ position:relative; overflow:hidden; }
+    .pressable:active{ transform:scale(.98); }
+    .ripple-ink{
+      position:absolute; border-radius:50%; pointer-events:none;
+      background:rgba(22,163,74,.25);
+      transform:scale(0); opacity:1;
+      animation:ripple .6s ease-out forwards;
+      will-change:transform, opacity;
+    }
+    @keyframes ripple{ to{ transform:scale(1); opacity:0; } }
+
     .btn{
       display:inline-flex; align-items:center; gap:8px; padding:12px 14px;
       border-radius:14px; border:1px solid #173e31;
       background:linear-gradient(180deg,#0f1f1a,#0c1915);
       color:#e9fff6; cursor:pointer; font-weight:800; letter-spacing:.2px;
       transition:transform .08s ease, filter .18s ease, border-color .18s ease, background .18s ease;
-      position:relative; overflow:hidden; will-change:transform;
+      will-change:transform;
       touch-action: manipulation;
     }
     .btn svg{width:18px; height:18px}
     .btn:hover{border-color:#256c50; filter:brightness(1.06)}
     .btn:active{transform:scale(.98)}
-    .btn::after{
-      content:""; position:absolute; inset:auto auto 0 0; width:0; height:0; border-radius:50%;
-      background:#16a34a33; transform:translate(-50%,50%); pointer-events:none;
-    }
-    .btn:active::after{ width:220%; height:220%; transition:width .28s ease, height .28s ease; }
     .btn.primary{ background:linear-gradient(180deg,#0f281f,#0b2019); border-color:#1b5f46; box-shadow:inset 0 1px 0 #ffffff10, 0 8px 18px #0b3b2a55; }
     .btn.warn{ background:linear-gradient(180deg,#2b1f0a,#241a08); border-color:#7a5113; }
 
@@ -222,7 +229,7 @@
 
       <!-- Language Switch -->
       <div class="lang-switch" aria-label="Language">
-        <button id="langTR" class="flag" title="Türkçe" aria-label="Türkçe">
+        <button id="langTR" class="flag pressable" title="Türkçe" aria-label="Türkçe">
           <svg viewBox="0 0 640 480" aria-hidden="true">
             <path fill="#e30a17" d="M0 0h640v480H0z"/>
             <circle fill="#fff" cx="258.4" cy="240" r="76.8"/>
@@ -230,7 +237,7 @@
             <path fill="#fff" d="M335.7 240l51.8 16.8-32-44.2v54.8l32-44.2z"/>
           </svg>
         </button>
-        <button id="langEN" class="flag" title="English" aria-label="English">
+        <button id="langEN" class="flag pressable" title="English" aria-label="English">
           <svg viewBox="0 0 60 40" aria-hidden="true">
             <defs><clipPath id="c"><path d="M0,0H60V40H0z"/></clipPath></defs>
             <g clip-path="url(#c)">
@@ -263,7 +270,7 @@
           </div>
           <div>
             <label style="visibility:hidden">.</label>
-            <button id="addBtn" class="btn primary" title="Sepete ekle">
+            <button id="addBtn" class="btn primary pressable" title="Sepete ekle">
               <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M6 6h15l-2 8H8L6 2H2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M10 12l3 3 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
@@ -294,7 +301,7 @@
       <div class="total">
         <span id="totalLabel">Toplam:</span>
         <span class="money" id="total">$0.00</span>
-        <button class="btn warn" id="clearAll" title="Hepsini temizle"><span id="btnClearText">Temizle</span></button>
+        <button class="btn warn pressable" id="clearAll" title="Hepsini temizle"><span id="btnClearText">Temizle</span></button>
       </div>
     </div>
   </footer>
@@ -307,7 +314,7 @@
     <div class="drag"></div>
     <div class="head">
       <strong id="editTitle">Ürünü Düzenle</strong>
-      <button id="closeSheet" class="ghost" title="Kapat"><span id="btnCloseText">Kapat ✕</span></button>
+      <button id="closeSheet" class="ghost pressable" title="Kapat"><span id="btnCloseText">Kapat ✕</span></button>
     </div>
     <div class="body">
       <div class="row">
@@ -321,8 +328,8 @@
         </div>
       </div>
       <div class="actions">
-        <button id="deleteItem" class="btn" style="border-color:#5a1b1b;background:linear-gradient(180deg,#2a0e0e,#220b0b)"><span id="btnDeleteText">Sil</span></button>
-        <button id="saveItem" class="btn primary"><span id="btnSaveText">Kaydet</span></button>
+        <button id="deleteItem" class="btn pressable" style="border-color:#5a1b1b;background:linear-gradient(180deg,#2a0e0e,#220b0b)"><span id="btnDeleteText">Sil</span></button>
+        <button id="saveItem" class="btn primary pressable"><span id="btnSaveText">Kaydet</span></button>
       </div>
     </div>
   </section>
@@ -334,7 +341,7 @@
         <strong>Uygulama gibi kullan:</strong>
         Paylaş → <em>Ana Ekrana Ekle</em>
       </div>
-      <button id="a2hsClose" class="close">Kapat</button>
+      <button id="a2hsClose" class="close pressable">Kapat</button>
     </div>
   </div>
 
@@ -411,7 +418,7 @@
     function parsePrice(v){
       if(typeof v !== 'string') return NaN;
       v = v.replace(/\s+/g,'')
-           .replace(/[${}]/g,'')      // $ ve süslü parantezleri temizle (içerik yapışmasın)
+           .replace(/[${}]/g,'')      // $ ve süslü parantezleri temizle
            .replace(/[₺]/g,'')
            .replace(',', '.');
       const n = parseFloat(v);
@@ -462,7 +469,7 @@
     const langEN = document.getElementById('langEN');
 
     const a2hs = document.getElementById('a2hs');
-    const a2hsClose = document.getElementById('a2hsClose');
+    const a2hsClose = document.getElementById('a2hsClose'); // **TEK tanım**
 
     function applyI18N(){
       const t = I18N[lang];
@@ -529,14 +536,14 @@
         const row = document.createElement('div');
         row.className = 'item' + (it.done ? ' done' : '');
         row.innerHTML = `
-          <button class="ghost" aria-label="${t.toggleAria}" data-act="toggle" data-idx="${idx}" title="${t.toggleAria}">✓</button>
+          <button class="ghost pressable" aria-label="${t.toggleAria}" data-act="toggle" data-idx="${idx}" title="${t.toggleAria}">✓</button>
           <div>
             <div style="font-weight:800">${escapeHtml(it.name)}</div>
             <div class="muted" style="font-size:12px">${new Date(it.ts).toLocaleString(t.dateLocale)}</div>
           </div>
           <span class="pill money">${fmt.format(it.price)}</span>
-          <button class="ghost" aria-label="${t.edit}" data-act="edit" data-idx="${idx}" title="${t.edit}">✏️</button>
-          <button class="ghost" aria-label="${t.delete}" data-act="del" data-idx="${idx}" title="${t.delete}">🗑️</button>
+          <button class="ghost pressable" aria-label="${t.edit}" data-act="edit" data-idx="${idx}" title="${t.edit}">✏️</button>
+          <button class="ghost pressable" aria-label="${t.delete}" data-act="del" data-idx="${idx}" title="${t.delete}">🗑️</button>
         `;
         itemsEl.appendChild(row);
       });
@@ -546,7 +553,7 @@
       localStorage.setItem(storeKey, JSON.stringify(items));
     }
 
-    // --- toast ---
+    // --- Toast ---
     let toastTimer = null;
     function toast(msg){
       toastEl.textContent = msg || I18N[lang].toastAdded;
@@ -555,7 +562,7 @@
       toastTimer = setTimeout(()=>toastEl.classList.remove('show'), 1400);
     }
 
-    // --- add ---
+    // --- Add ---
     function addItem(){
       const t = I18N[lang];
       const name = (nameEl.value || '').trim();
@@ -572,11 +579,11 @@
     }
 
     function pulse(el){
-      el.style.boxShadow = '0 0 0 6px #ef444455';
-      setTimeout(()=> el.style.boxShadow = '', 250);
+      el.style.boxShadow = '0 0 0 6px #16a34a33';
+      setTimeout(()=> el.style.boxShadow = '', 220);
     }
 
-    // --- list actions ---
+    // --- List actions ---
     itemsEl.addEventListener('click', (e)=>{
       const btn = e.target.closest('button');
       if(!btn) return;
@@ -689,12 +696,26 @@
       a2hs?.classList.add('show');
       a2hs?.setAttribute('aria-hidden','false');
     }
-    const a2hsClose = document.getElementById('a2hsClose');
     a2hsClose?.addEventListener('click', ()=>{
       localStorage.setItem(A2HS_KEY, '1');
       a2hs.classList.remove('show');
       a2hs.setAttribute('aria-hidden','true');
     });
+
+    // ===== Universal Ripple =====
+    document.addEventListener('pointerdown', (e)=>{
+      const el = e.target.closest('.pressable');
+      if(!el) return;
+      const rect = el.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height) * 2;
+      const ink = document.createElement('span');
+      ink.className = 'ripple-ink';
+      ink.style.width = ink.style.height = size + 'px';
+      ink.style.left = (e.clientX - rect.left - size/2) + 'px';
+      ink.style.top  = (e.clientY - rect.top  - size/2) + 'px';
+      el.appendChild(ink);
+      setTimeout(()=>ink.remove(), 650);
+    }, {passive:true});
 
     applyI18N();
     showA2HSIfNeeded();
